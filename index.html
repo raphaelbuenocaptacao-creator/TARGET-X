@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#090b10" />
+  <meta name="description" content="TARGET X — Central de metas da empresa" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icon.svg" type="image/svg+xml" />
+  <title>TARGET X</title>
+  <style>
+    :root{
+      --bg:#07090d;--panel:#0d1118;--panel2:#111722;--line:#202838;--txt:#f6f8fb;--muted:#8d98aa;
+      --accent:#7cf7c8;--cyan:#6ad8ff;--gold:#ffd166;--danger:#ff6b7a;--ok:#6df7a7;
+    }
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial;background:radial-gradient(circle at 80% 0,#122338 0,transparent 33%),radial-gradient(circle at 15% 10%,#10231d 0,transparent 25%),var(--bg);color:var(--txt);min-height:100vh}
+    body:before{content:"";position:fixed;inset:0;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,.015) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.015) 1px,transparent 1px);background-size:36px 36px;mask-image:linear-gradient(to bottom,black,transparent 85%)}
+    .wrap{max-width:1220px;margin:auto;padding:22px}.top{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:20px}.brand{display:flex;align-items:center;gap:12px}.logo{width:45px;height:45px;border:1px solid #2f4555;border-radius:14px;display:grid;place-items:center;background:linear-gradient(145deg,#14212a,#0a0d12);box-shadow:0 0 35px #63ddff22}.logo b{font-size:19px;letter-spacing:-1px}.eyebrow{font-size:11px;letter-spacing:2.5px;color:var(--muted);text-transform:uppercase}.brand h1{font-size:24px;line-height:1;margin:5px 0 0;letter-spacing:1px}.datechip{font-size:12px;color:#cbd3df;border:1px solid var(--line);background:#0b0f15bb;padding:9px 12px;border-radius:999px}
+    .hero{display:grid;grid-template-columns:1.45fr .75fr;gap:16px}.card{background:linear-gradient(180deg,#101620ef,#0b0f16ef);border:1px solid var(--line);border-radius:22px;padding:20px;box-shadow:0 18px 60px #0000003b;backdrop-filter:blur(10px)}.heroMain{position:relative;overflow:hidden}.heroMain:after{content:"";position:absolute;width:240px;height:240px;border-radius:50%;background:#63eecf16;filter:blur(8px);right:-80px;top:-100px}.kicker{font-size:12px;color:var(--accent);letter-spacing:2px;text-transform:uppercase}.big{font-size:clamp(48px,8vw,92px);font-weight:800;letter-spacing:-5px;margin:10px 0 6px;line-height:.95}.sub{color:var(--muted);font-size:14px}.progress{height:13px;background:#171d27;border-radius:999px;margin:22px 0 9px;overflow:hidden;border:1px solid #242c38}.progress>span{display:block;height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--cyan));border-radius:999px;transition:width .6s}.row{display:flex;justify-content:space-between;gap:10px;color:#dfe6ef;font-size:13px}.sideGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.mini{padding:15px;border-radius:17px;background:#0c121a;border:1px solid #1f2835}.mini .v{font-size:28px;font-weight:750;margin-top:7px;letter-spacing:-1px}.mini .l{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1.4px}.mini.wide{grid-column:1/-1}.status{display:flex;align-items:center;gap:8px;margin-top:8px}.dot{width:9px;height:9px;border-radius:50%;background:var(--gold);box-shadow:0 0 15px currentColor}.status span{font-size:13px;color:#dce3ec}
+    .sectionTitle{display:flex;justify-content:space-between;align-items:end;margin:28px 2px 12px}.sectionTitle h2{font-size:15px;text-transform:uppercase;letter-spacing:1.5px;margin:0}.sectionTitle small{color:var(--muted)}.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.metric .head{display:flex;justify-content:space-between;gap:8px;align-items:center}.metric .icon{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;background:#131a25;border:1px solid #222d3b}.metric h3{font-size:13px;margin:0;color:#dce3ec}.metric .num{font-size:35px;font-weight:800;letter-spacing:-1.5px;margin:18px 0 4px}.metric .meta{color:var(--muted);font-size:12px}.metric .bar{height:7px;background:#171d27;border-radius:99px;margin-top:14px;overflow:hidden}.metric .bar span{height:100%;display:block;border-radius:99px;background:linear-gradient(90deg,var(--cyan),var(--accent))}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}.calc{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}.calcBox{padding:14px;background:#0a0f15;border:1px solid #1d2632;border-radius:14px}.calcBox b{display:block;font-size:22px;margin-top:5px}.calcBox span{font-size:11px;color:var(--muted);text-transform:uppercase}.insight{padding:14px 16px;border-radius:15px;background:linear-gradient(90deg,#11241e,#101820);border:1px solid #244338;color:#dff9ef;font-size:13px;line-height:1.55;margin-top:13px}.form{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}.field label{display:block;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin:0 0 6px}.field input{width:100%;border:1px solid #26303e;background:#090d13;color:white;border-radius:12px;padding:12px;font-size:15px;outline:none}.field input:focus{border-color:#5ddfb3}.actions{display:flex;gap:9px;margin-top:12px}.btn{border:0;border-radius:12px;padding:11px 14px;font-weight:700;cursor:pointer}.btn.primary{background:var(--accent);color:#07110d}.btn.ghost{background:#131a24;color:#dce3ec;border:1px solid #26303d}.footer{padding:25px 2px 8px;color:#657184;font-size:11px;display:flex;justify-content:space-between}.pulse{animation:pulse 2s infinite}@keyframes pulse{0%,100%{opacity:1}50%{opacity:.55}}
+    @media(max-width:850px){.hero,.grid2{grid-template-columns:1fr}.metrics{grid-template-columns:1fr}.sideGrid{grid-template-columns:1fr 1fr}.wrap{padding:15px}.big{letter-spacing:-3px}.calc,.form{grid-template-columns:1fr 1fr}.footer{flex-direction:column;gap:7px}}
+    @media(max-width:520px){.top{align-items:flex-start}.datechip{display:none}.sideGrid,.calc,.form{grid-template-columns:1fr}.mini.wide{grid-column:auto}.card{padding:17px}.big{font-size:55px}.metric .num{font-size:31px}}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header class="top">
+      <div class="brand"><div class="logo"><b>TX</b></div><div><div class="eyebrow">Performance Command</div><h1>TARGET X</h1></div></div>
+      <div class="datechip" id="today"></div>
+    </header>
+
+    <section class="hero">
+      <article class="card heroMain">
+        <div class="kicker">Meta de Setembro • 2026</div>
+        <div class="big">R$ 8,5 MI</div>
+        <div class="sub">Objetivo central da operação</div>
+        <div class="progress"><span id="vgvProgress"></span></div>
+        <div class="row"><span id="vgvPercent">0% realizado</span><span id="vgvRemaining">Faltam R$ 8.500.000</span></div>
+      </article>
+      <aside class="sideGrid">
+        <div class="mini"><div class="l">Meta vendas</div><div class="v">101</div></div>
+        <div class="mini"><div class="l">Meta casais</div><div class="v">370</div></div>
+        <div class="mini wide"><div class="l">Status do mês</div><div class="status"><i class="dot pulse" id="statusDot"></i><span id="statusText">Aguardando produção</span></div></div>
+      </aside>
+    </section>
+
+    <div class="sectionTitle"><h2>Placar atual</h2><small>Atualize os realizados abaixo</small></div>
+    <section class="metrics">
+      <article class="card metric"><div class="head"><h3>VGV realizado</h3><div class="icon">R$</div></div><div class="num" id="vgvNow">R$ 0</div><div class="meta">Meta: R$ 8.500.000</div><div class="bar"><span id="vgvBar" style="width:0%"></span></div></article>
+      <article class="card metric"><div class="head"><h3>Vendas realizadas</h3><div class="icon">✦</div></div><div class="num" id="salesNow">0</div><div class="meta">Meta: 101 vendas</div><div class="bar"><span id="salesBar" style="width:0%"></span></div></article>
+      <article class="card metric"><div class="head"><h3>Casais realizados</h3><div class="icon">◎</div></div><div class="num" id="couplesNow">0</div><div class="meta">Meta: 370 casais</div><div class="bar"><span id="couplesBar" style="width:0%"></span></div></article>
+    </section>
+
+    <div class="sectionTitle"><h2>Sala de Guerra</h2><small>O que precisamos produzir para chegar</small></div>
+    <section class="grid2">
+      <article class="card">
+        <div class="kicker">Ritmo necessário</div>
+        <div class="calc">
+          <div class="calcBox"><span>Dias restantes</span><b id="daysLeft">0</b></div>
+          <div class="calcBox"><span>VGV por dia</span><b id="dailyVgv">R$ 0</b></div>
+          <div class="calcBox"><span>Vendas por dia</span><b id="dailySales">0</b></div>
+          <div class="calcBox"><span>Casais por dia</span><b id="dailyCouples">0</b></div>
+          <div class="calcBox"><span>Ticket meta</span><b id="ticketMeta">R$ 0</b></div>
+          <div class="calcBox"><span>Conversão meta</span><b id="conversionMeta">0%</b></div>
+        </div>
+        <div class="insight" id="insight">Comece lançando o realizado do mês para o TARGET X calcular o ritmo necessário.</div>
+      </article>
+
+      <article class="card">
+        <div class="kicker">Atualizar produção</div>
+        <div class="form">
+          <div class="field"><label>VGV realizado</label><input id="inputVgv" type="number" min="0" step="1000" placeholder="Ex.: 1250000"></div>
+          <div class="field"><label>Vendas</label><input id="inputSales" type="number" min="0" step="1" placeholder="Ex.: 15"></div>
+          <div class="field"><label>Casais</label><input id="inputCouples" type="number" min="0" step="1" placeholder="Ex.: 48"></div>
+        </div>
+        <div class="actions"><button class="btn primary" id="saveBtn">Salvar produção</button><button class="btn ghost" id="resetBtn">Zerar</button></div>
+        <div class="insight">Os dados ficam salvos neste aparelho. Na próxima etapa, podem ser sincronizados com banco de dados, login e atualização por equipe.</div>
+      </article>
+    </section>
+
+    <footer class="footer"><span>TARGET X • Meta Setembro 2026</span><span>Mission Control v1.0</span></footer>
+  </main>
+<script>
+const META={vgv:8500000,sales:101,couples:370};
+const money=v=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL',maximumFractionDigits:0}).format(v);
+const pct=(a,b)=>b?Math.min((a/b)*100,999):0;
+const n1=v=>new Intl.NumberFormat('pt-BR',{maximumFractionDigits:1}).format(v);
+function remainingDays(){const now=new Date();const end=new Date(2026,8,30,23,59,59);if(now>end)return 0;const start=new Date(now.getFullYear(),now.getMonth(),now.getDate());return Math.max(1,Math.ceil((end-start)/86400000)+1)}
+function load(){try{return JSON.parse(localStorage.getItem('targetx-sep26'))||{vgv:0,sales:0,couples:0}}catch{return{vgv:0,sales:0,couples:0}}}
+function render(){const d=load(),days=remainingDays();const pv=pct(d.vgv,META.vgv),ps=pct(d.sales,META.sales),pc=pct(d.couples,META.couples);
+ document.querySelector('#today').textContent=new Intl.DateTimeFormat('pt-BR',{weekday:'long',day:'2-digit',month:'long'}).format(new Date());
+ ['vgvProgress','vgvBar'].forEach(id=>document.getElementById(id).style.width=Math.min(pv,100)+'%');document.getElementById('salesBar').style.width=Math.min(ps,100)+'%';document.getElementById('couplesBar').style.width=Math.min(pc,100)+'%';
+ document.getElementById('vgvPercent').textContent=n1(pv)+'% realizado';document.getElementById('vgvRemaining').textContent=d.vgv>=META.vgv?'META BATIDA':`Faltam ${money(META.vgv-d.vgv)}`;
+ document.getElementById('vgvNow').textContent=money(d.vgv);document.getElementById('salesNow').textContent=d.sales;document.getElementById('couplesNow').textContent=d.couples;
+ document.getElementById('daysLeft').textContent=days;document.getElementById('dailyVgv').textContent=money(Math.max(0,META.vgv-d.vgv)/Math.max(days,1));document.getElementById('dailySales').textContent=n1(Math.max(0,META.sales-d.sales)/Math.max(days,1));document.getElementById('dailyCouples').textContent=n1(Math.max(0,META.couples-d.couples)/Math.max(days,1));
+ document.getElementById('ticketMeta').textContent=money(META.vgv/META.sales);document.getElementById('conversionMeta').textContent=n1((META.sales/META.couples)*100)+'%';
+ const start=new Date(2026,8,1),end=new Date(2026,8,30),now=new Date();const elapsed=Math.max(0,Math.min(30,Math.floor((new Date(now.getFullYear(),now.getMonth(),now.getDate())-start)/86400000)+1));const expected=(elapsed/30)*100;let status='No ritmo';let color='var(--ok)';if(pv+4<expected){status='Abaixo do ritmo necessário';color='var(--danger)'}else if(pv<expected){status='Atenção ao ritmo';color='var(--gold)'}else if(pv===0){status='Aguardando produção';color='var(--gold)'}document.getElementById('statusText').textContent=status;document.getElementById('statusDot').style.background=color;
+ const rv=Math.max(0,META.vgv-d.vgv),rs=Math.max(0,META.sales-d.sales),rc=Math.max(0,META.couples-d.couples);document.getElementById('insight').textContent=d.vgv||d.sales||d.couples?`Para fechar setembro na meta, faltam ${money(rv)}, ${rs} vendas e ${rc} casais. Com ${days} dia(s) restante(s), o alvo médio é ${money(rv/Math.max(days,1))} por dia.`:'Comece lançando o realizado do mês para o TARGET X calcular o ritmo necessário.';
+ document.getElementById('inputVgv').value=d.vgv||'';document.getElementById('inputSales').value=d.sales||'';document.getElementById('inputCouples').value=d.couples||'';
+}
+document.getElementById('saveBtn').onclick=()=>{localStorage.setItem('targetx-sep26',JSON.stringify({vgv:+inputVgv.value||0,sales:+inputSales.value||0,couples:+inputCouples.value||0}));render()};document.getElementById('resetBtn').onclick=()=>{localStorage.removeItem('targetx-sep26');render()};
+if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));render();
+</script>
+</body></html>
