@@ -1,71 +1,11 @@
 const CACHE_PREFIX='target-x-shell-';
-const CACHE_VERSION='v25-safe';
+const CACHE_VERSION='v24-cloud-20260902';
 const CACHE=`${CACHE_PREFIX}${CACHE_VERSION}`;
 const APP_SHELL=['./','./index.html','./manifest.webmanifest','./icon.svg','./icon-192.png','./icon-512.png'];
 const SENSITIVE_PATH=/(^|\/)(api|auth|login|logout|session|token|oauth|callback|admin)(\/|$)/i;
 const SENSITIVE_QUERY=/(token|access_token|refresh_token|authorization|password|senha|session|secret|code)=/i;
-
-function isSafeRequest(request){
-  if(request.method!=='GET') return false;
-  if(request.headers.has('authorization')||request.headers.has('cookie')||request.headers.has('range')) return false;
-  let url;
-  try{url=new URL(request.url);}catch{return false;}
-  if(url.origin!==self.location.origin) return false;
-  if(SENSITIVE_PATH.test(url.pathname)||SENSITIVE_QUERY.test(url.search)) return false;
-  return true;
-}
-
-function isSafeResponse(response){
-  if(!response||!response.ok||response.status===206||response.type==='opaque'||response.redirected) return false;
-  const cc=(response.headers.get('cache-control')||'').toLowerCase();
-  if(cc.includes('no-store')||cc.includes('private')) return false;
-  if(response.headers.has('set-cookie')||response.headers.has('content-range')) return false;
-  return true;
-}
-
-self.addEventListener('install',event=>{
-  self.skipWaiting();
-  event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(APP_SHELL)));
-});
-
-self.addEventListener('activate',event=>{
-  event.waitUntil((async()=>{
-    const keys=await caches.keys();
-    await Promise.all(keys.filter(key=>key.startsWith(CACHE_PREFIX)&&key!==CACHE).map(key=>caches.delete(key)));
-    await self.clients.claim();
-  })());
-});
-
-self.addEventListener('fetch',event=>{
-  const {request}=event;
-  if(!isSafeRequest(request)) return;
-
-  if(request.mode==='navigate'){
-    event.respondWith((async()=>{
-      try{
-        const response=await fetch(request);
-        if(isSafeResponse(response)){
-          const cache=await caches.open(CACHE);
-          await cache.put('./index.html',response.clone());
-        }
-        return response;
-      }catch{
-        return (await caches.match('./index.html',{cacheName:CACHE})) || Response.error();
-      }
-    })());
-    return;
-  }
-
-  event.respondWith((async()=>{
-    try{
-      const response=await fetch(request);
-      if(isSafeResponse(response)){
-        const cache=await caches.open(CACHE);
-        await cache.put(request,response.clone());
-      }
-      return response;
-    }catch{
-      return (await caches.match(request,{cacheName:CACHE})) || Response.error();
-    }
-  })());
-});
+function isSafeRequest(request){if(request.method!=='GET')return false;if(request.headers.has('authorization')||request.headers.has('cookie')||request.headers.has('range'))return false;let url;try{url=new URL(request.url)}catch{return false}if(url.origin!==self.location.origin)return false;if(SENSITIVE_PATH.test(url.pathname)||SENSITIVE_QUERY.test(url.search))return false;return true}
+function isSafeResponse(response){if(!response||!response.ok||response.status===206||response.type==='opaque'||response.redirected)return false;const cc=(response.headers.get('cache-control')||'').toLowerCase();if(cc.includes('no-store')||cc.includes('private'))return false;if(response.headers.has('set-cookie')||response.headers.has('content-range'))return false;return true}
+self.addEventListener('install',event=>{self.skipWaiting();event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(APP_SHELL)))});
+self.addEventListener('activate',event=>{event.waitUntil((async()=>{const keys=await caches.keys();await Promise.all(keys.filter(key=>key.startsWith(CACHE_PREFIX)&&key!==CACHE).map(key=>caches.delete(key)));await self.clients.claim()})())});
+self.addEventListener('fetch',event=>{const{request}=event;if(!isSafeRequest(request))return;if(request.mode==='navigate'){event.respondWith((async()=>{try{const response=await fetch(request);if(isSafeResponse(response)){const cache=await caches.open(CACHE);await cache.put('./index.html',response.clone())}return response}catch{return(await caches.match('./index.html',{cacheName:CACHE}))||Response.error()}})());return}event.respondWith((async()=>{try{const response=await fetch(request);if(isSafeResponse(response)){const cache=await caches.open(CACHE);await cache.put(request,response.clone())}return response}catch{return(await caches.match(request,{cacheName:CACHE}))||Response.error()}})())});
