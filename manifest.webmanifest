@@ -1,0 +1,10 @@
+{
+  "name":"TARGET X — Performance Command",
+  "short_name":"TARGET X",
+  "start_url":"./",
+  "display":"standalone",
+  "background_color":"#07090d",
+  "theme_color":"#090b10",
+  "description":"Central de metas da operação — Setembro 2026",
+  "icons":[{"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
+}
