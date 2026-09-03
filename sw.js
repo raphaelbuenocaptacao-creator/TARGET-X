@@ -1,5 +1,5 @@
 const CACHE_PREFIX='target-x-shell-';
-const CACHE_VERSION='v33-20260903';
+const CACHE_VERSION='v35-20260903';
 const CACHE=`${CACHE_PREFIX}${CACHE_VERSION}`;
 const APP_SHELL=['./','./index.html','./hist-2026.js','./manifest.webmanifest','./icon.svg','./icon-192.png','./icon-512.png'];
 self.addEventListener('install',event=>{self.skipWaiting();event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(APP_SHELL)))});
