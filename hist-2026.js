@@ -1,1 +1,1 @@
-// TARGET X historical dataset placeholder; data loaded from Supabase aggregation in index v3
+const HIST=[];
