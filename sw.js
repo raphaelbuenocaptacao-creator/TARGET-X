@@ -1,5 +1,5 @@
 const CACHE_PREFIX = 'target-x-shell-';
-const CACHE_VERSION = 'v37-20260905-raster-safe';
+const CACHE_VERSION = 'v38-20260906-resilient-install';
 const CACHE = `${CACHE_PREFIX}${CACHE_VERSION}`;
 const APP_SHELL = [
   './',
@@ -34,11 +34,25 @@ function isCacheableResponse(response) {
   return true;
 }
 
+async function precacheShell() {
+  const cache = await caches.open(CACHE);
+  await Promise.allSettled(APP_SHELL.map(async (asset) => {
+    try {
+      const response = await fetch(asset, {
+        credentials: 'omit',
+        cache: 'no-store',
+        redirect: 'error'
+      });
+      if (isCacheableResponse(response)) await cache.put(asset, response);
+    } catch {
+      // A single missing/transient asset must not block installation of the whole PWA.
+    }
+  }));
+}
+
 self.addEventListener('install', (event) => {
   self.skipWaiting();
-  event.waitUntil(
-    caches.open(CACHE).then((cache) => cache.addAll(APP_SHELL))
-  );
+  event.waitUntil(precacheShell());
 });
 
 self.addEventListener('activate', (event) => {
