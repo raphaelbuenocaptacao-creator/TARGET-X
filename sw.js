@@ -1,7 +1,7 @@
 const CACHE_PREFIX='target-x-shell-';
-const CACHE_VERSION='v41-20260906-annual';
+const CACHE_VERSION='v42-20260906-manager';
 const CACHE=`${CACHE_PREFIX}${CACHE_VERSION}`;
-const APP_SHELL=['./','./index.html','./hist-2026.js','./app.js','./manifest.webmanifest','./icon-192.png','./icon-512.png'];
+const APP_SHELL=['./','./index.html','./hist-2026.js','./app.js','./manager-tools.js','./manifest.webmanifest','./icon-192.png','./icon-512.png'];
 const SENSITIVE_PATH=/(?:^|\/)(?:api|auth|login|logout|session|sessions|token|tokens|account|accounts|profile|admin|private|user|users)(?:\/|$)/i;
 const SENSITIVE_PARAM=/(?:token|access_token|refresh_token|code|password|senha|secret|session|auth|authorization)/i;
 const SAFE_SHELL_PATHS=new Set(APP_SHELL.map(item=>new URL(item,self.registration.scope).pathname));
