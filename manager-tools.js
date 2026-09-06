@@ -16,14 +16,42 @@ effectivePerson = function(name){
   return p;
 };
 
-// Tela de equipes passa a respeitar as escolhas feitas na ficha profissional.
+function teamOptions(current){
+  return TX_TEAMS.map(g=>`<option value="${g}" ${g===(current||'A DEFINIR')?'selected':''}>${g}</option>`).join('');
+}
+
+// Tela de equipes: permite definir ou trocar a equipe direto no card de cada profissional.
 renderTeams = function(){
   const groups = TX_TEAMS;
   $('teamGrid').innerHTML = groups.map(g=>{
     const members = HIST.filter(x=>x.active).map(x=>effectivePerson(x.name)).filter(x=>(x.group||'A DEFINIR')===g);
     const agg = members.reduce((a,p)=>plus(a,personMonth(p.name,9)),blank());
-    return `<div class="card"><div class="label">Equipe</div><h2>${g}</h2><div class="stats" style="grid-template-columns:repeat(3,1fr)">${stat('Casais',num(agg.couples))}${stat('Vendas',num(agg.sales))}${stat('VGV',money(agg.vgv))}</div><div style="margin-top:10px">${members.map(p=>{let s=personMonth(p.name,9);return `<div class="member"><b>${p.name}</b><span class="tiny">${num(s.couples)} casais • ${num(s.sales)} vendas • ${money(s.vgv)}</span></div>`}).join('')}</div></div>`;
+    const memberHtml = members.length ? members.map(p=>{
+      const s = personMonth(p.name,9);
+      return `<div class="member" style="display:grid;grid-template-columns:minmax(0,1fr) 185px;gap:10px;align-items:center">
+        <div>
+          <b>${p.name}</b>
+          <span class="tiny">${num(s.couples)} casais • ${num(s.sales)} vendas • ${money(s.vgv)}</span>
+        </div>
+        <div>
+          <div class="tiny" style="margin-bottom:4px">Definir equipe</div>
+          <select class="tx-team-picker" data-person="${encodeURIComponent(p.name)}" style="width:100%;padding:8px 10px">${teamOptions(p.group)}</select>
+        </div>
+      </div>`;
+    }).join('') : '<div class="empty">Nenhum profissional nesta equipe.</div>';
+    return `<div class="card"><div class="label">Equipe</div><h2>${g}</h2><div class="stats" style="grid-template-columns:repeat(3,1fr)">${stat('Casais',num(agg.couples))}${stat('Vendas',num(agg.sales))}${stat('VGV',money(agg.vgv))}</div><div style="margin-top:10px">${memberHtml}</div></div>`;
   }).join('');
+
+  document.querySelectorAll('.tx-team-picker').forEach(sel=>{
+    sel.onchange = ()=>{
+      const name = decodeURIComponent(sel.dataset.person);
+      teamOverrides[name] = sel.value;
+      saveTeamOverrides();
+      renderTeams();
+      renderRank();
+      if (profilePerson && profilePerson.value === name) renderProfile();
+    };
+  });
 };
 
 // Enriquece a ficha individual com seleção de equipe.
@@ -34,7 +62,7 @@ renderProfile = function(){
   const p = effectivePerson(n);
   const role = $('profileRole');
   if (!role) return;
-  role.innerHTML = `<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span>${p.role||'CAPTADOR'} • ${p.active?'ATIVO':'INATIVO'}</span><span class="tiny">Equipe atual:</span><select id="profileGroup" style="padding:7px 10px">${TX_TEAMS.map(g=>`<option value="${g}" ${g===(p.group||'A DEFINIR')?'selected':''}>${g}</option>`).join('')}</select></div>`;
+  role.innerHTML = `<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span>${p.role||'CAPTADOR'} • ${p.active?'ATIVO':'INATIVO'}</span><span class="tiny">Equipe atual:</span><select id="profileGroup" style="padding:7px 10px">${teamOptions(p.group)}</select></div>`;
   const teamSelect = $('profileGroup');
   teamSelect.onchange = ()=>{
     teamOverrides[n] = teamSelect.value;
