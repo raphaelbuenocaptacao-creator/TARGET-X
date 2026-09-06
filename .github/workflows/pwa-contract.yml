@@ -1,0 +1,31 @@
+name: TARGET-X PWA Contract
+
+on:
+  pull_request:
+    paths:
+      - 'sw.js'
+      - 'tests/pwa-contract.mjs'
+      - '.github/workflows/pwa-contract.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'sw.js'
+      - 'tests/pwa-contract.mjs'
+      - '.github/workflows/pwa-contract.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  pwa-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Validate service worker safety contract
+        run: node tests/pwa-contract.mjs
