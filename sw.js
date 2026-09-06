@@ -1,12 +1,11 @@
 const CACHE_PREFIX = 'target-x-shell-';
-const CACHE_VERSION = 'v36-20260903-safe';
+const CACHE_VERSION = 'v37-20260905-raster-safe';
 const CACHE = `${CACHE_PREFIX}${CACHE_VERSION}`;
 const APP_SHELL = [
   './',
   './index.html',
   './hist-2026.js',
   './manifest.webmanifest',
-  './icon.svg',
   './icon-192.png',
   './icon-512.png'
 ];
@@ -29,7 +28,10 @@ function isCacheableResponse(response) {
   if (!response || !response.ok || response.type === 'opaque' || response.redirected) return false;
   if (response.status === 206 || response.headers.has('content-range') || response.headers.has('set-cookie')) return false;
   const cacheControl = response.headers.get('cache-control') || '';
-  return !/(?:^|,)\s*(?:private|no-store)\b/i.test(cacheControl);
+  if (/(?:^|,)\s*(?:private|no-store)\b/i.test(cacheControl)) return false;
+  const vary = response.headers.get('vary') || '';
+  if (/(?:^|,)\s*(?:cookie|authorization)\s*(?:,|$)/i.test(vary)) return false;
+  return true;
 }
 
 self.addEventListener('install', (event) => {
