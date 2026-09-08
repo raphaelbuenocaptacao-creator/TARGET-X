@@ -51,7 +51,21 @@
   }
 
   async function ackedSet(){const s=getAck();if(window.TXCloud?.isConnected?.()){try{const cloud=await window.TXCloud.getAcked();cloud.forEach(x=>s.add(x.alert_key));saveAck(s)}catch{}}return s}
-  async function acknowledge(a){const s=getAck();s.add(a.key);saveAck(s);try{if(window.TXCloud?.isConnected?.())await window.TXCloud.ackAlert(a)}catch{}renderAlerts();showNextPopup()}
+  async function acknowledge(a){
+    const s=getAck();
+    s.add(a.key);
+    saveAck(s);
+
+    // Fecha o popup imediatamente para o botão "Entendido" responder na hora.
+    const ov=document.getElementById('txAlertOverlay');
+    if(ov){ov.classList.remove('open');ov.dataset.key='';ov.innerHTML=''}
+
+    // Atualiza a interface sem esperar a sincronização em nuvem.
+    await renderAlerts();
+
+    // Persiste na nuvem em segundo plano quando disponível.
+    try{if(window.TXCloud?.isConnected?.())await window.TXCloud.ackAlert(a)}catch(e){console.warn('TARGET X: falha ao sincronizar confirmação do alerta',e)}
+  }
   function openPerson(name){if(!name)return;try{if([...profilePerson.options].some(o=>o.value===name)){profilePerson.value=name;show('profile')}}catch{}}
 
   function mount(){
