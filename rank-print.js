@@ -2,7 +2,7 @@
 (function(){
   // A planilha enviada em 08/09 passa a ser a fonte oficial para 06 e 07/09.
   if(!document.querySelector('script[data-tx-official-0607]')){
-    const s=document.createElement('script');s.async=false;s.src='official-0607-corrected.js?v=45';s.dataset.txOfficial0607='1';document.head.appendChild(s);
+    const s=document.createElement('script');s.async=false;s.src='official-0607-corrected.js?v=48';s.dataset.txOfficial0607='1';document.head.appendChild(s);
   }
 
   const css=document.createElement('style');
@@ -17,7 +17,8 @@
   const old=window.renderRank;if(typeof old==='function')window.renderRank=function(){old();setTimeout(ensureButton,0)};document.addEventListener('click',e=>{if(e.target?.dataset?.page==='rank')setTimeout(ensureButton,0)});setTimeout(ensureButton,500);
 })();
 
-// Módulos da versão 4.5. async=false preserva a ordem e evita alertas calculados antes do fechamento oficial.
-(function(){if(document.querySelector('script[data-tx-upload]'))return;const s=document.createElement('script');s.async=false;s.src='upload-import.js?v=45';s.dataset.txUpload='1';document.head.appendChild(s)})();
-(function(){if(document.querySelector('script[data-tx-cloud]'))return;const s=document.createElement('script');s.async=false;s.src='cloud-sync.js?v=45';s.dataset.txCloud='1';document.head.appendChild(s)})();
-(function(){if(document.querySelector('script[data-tx-alerts]'))return;const s=document.createElement('script');s.async=false;s.src='alerts.js?v=45';s.dataset.txAlerts='1';document.head.appendChild(s)})();
+// Módulos auxiliares.
+(function(){if(document.querySelector('script[data-tx-upload]'))return;const s=document.createElement('script');s.async=false;s.src='upload-import.js?v=48';s.dataset.txUpload='1';document.head.appendChild(s)})();
+(function(){if(document.querySelector('script[data-tx-client-profile]'))return;const s=document.createElement('script');s.async=false;s.src='client-profile.js?v=48';s.dataset.txClientProfile='1';document.head.appendChild(s)})();
+(function(){if(document.querySelector('script[data-tx-cloud]'))return;const s=document.createElement('script');s.async=false;s.src='cloud-sync.js?v=48';s.dataset.txCloud='1';document.head.appendChild(s)})();
+(function(){if(document.querySelector('script[data-tx-alerts]'))return;const s=document.createElement('script');s.async=false;s.src='alerts.js?v=48';s.dataset.txAlerts='1';document.head.appendChild(s)})();
