@@ -1,3 +1,21 @@
+// TARGET X — resultado oficial de 07/09/2026 informado pelo gestor
+const OFFICIAL_0709=[
+  {id:'official-2026-09-07-clacion',date:'2026-09-07',person:'CLACION DE SOUZA BRAGA FILHO',couples:1,sales:0,vgv:0,vgv_general:0,q:0,nq:0,notour:0,gift:0,cancelled:0,attendances:1,source:'official-0709'},
+  {id:'official-2026-09-07-leandra',date:'2026-09-07',person:'LETICIA LEANDRA DE TOLEDO',couples:1,sales:0,vgv:0,vgv_general:0,q:0,nq:0,notour:0,gift:0,cancelled:0,attendances:1,source:'official-0709'},
+  {id:'official-2026-09-07-josyene',date:'2026-09-07',person:'JOSYENE APARECIDA DE FREITAS',couples:1,sales:1,vgv:80000,vgv_general:80000,q:0,nq:0,notour:0,gift:0,cancelled:0,attendances:1,source:'official-0709'},
+  {id:'official-2026-09-07-paulo',date:'2026-09-07',person:'PAULO VICTOR ORTIZ',couples:2,sales:0,vgv:0,vgv_general:0,q:0,nq:0,notour:0,gift:0,cancelled:0,attendances:2,source:'official-0709'},
+  {id:'official-2026-09-07-otavio',date:'2026-09-07',person:'OTAVIO JOSE DE OLIVEIRA MARTINS',couples:4,sales:0,vgv:0,vgv_general:0,q:0,nq:0,notour:0,gift:0,cancelled:0,attendances:4,source:'official-0709'},
+  {id:'official-2026-09-07-manara',date:'2026-09-07',person:'MANARA ALEXANDRE SOUSA',couples:2,sales:0,vgv:0,vgv_general:0,q:0,nq:0,notour:0,gift:0,cancelled:0,attendances:2,source:'official-0709'},
+  {id:'official-2026-09-07-carol',date:'2026-09-07',person:'ANA CAROLINE DA SILVA LOPES PEREIRA',couples:1,sales:1,vgv:80000,vgv_general:80000,q:0,nq:0,notour:0,gift:0,cancelled:0,attendances:1,source:'official-0709'},
+  {id:'official-2026-09-07-andre',date:'2026-09-07',person:'ANDRE LUIS CARRIÇO DOS SANTOS',couples:4,sales:0,vgv:0,vgv_general:0,q:0,nq:0,notour:0,gift:0,cancelled:0,attendances:4,source:'official-0709'},
+  {id:'official-2026-09-07-renan',date:'2026-09-07',person:'RENAN MARCONDES JOHAS',couples:3,sales:0,vgv:0,vgv_general:0,q:0,nq:0,notour:0,gift:0,cancelled:0,attendances:3,source:'official-0709'}
+];
+OFFICIAL_0709.forEach(x=>{if(!launches.some(l=>l.id===x.id))launches.push(x);});
+saveState();
+setTimeout(()=>{
+  try{renderDashboard();renderRank();renderSeptember();renderProfile();renderTeams();if(window.renderCaptain)renderCaptain();}catch(e){}
+},0);
+
 // TARGET X — modo print do ranking mensal/anual
 (function(){
   const css=document.createElement('style');
