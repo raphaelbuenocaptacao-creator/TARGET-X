@@ -19,6 +19,7 @@
 
 // Módulos auxiliares.
 (function(){if(document.querySelector('script[data-tx-upload]'))return;const s=document.createElement('script');s.async=false;s.src='upload-import.js?v=48';s.dataset.txUpload='1';document.head.appendChild(s)})();
-(function(){if(document.querySelector('script[data-tx-client-profile]'))return;const s=document.createElement('script');s.async=false;s.src='client-profile.js?v=48';s.dataset.txClientProfile='1';document.head.appendChild(s)})();
+(function(){if(document.querySelector('script[data-tx-client-profile]'))return;const s=document.createElement('script');s.async=false;s.src='client-profile.js?v=54';s.dataset.txClientProfile='1';document.head.appendChild(s)})();
+(function(){if(document.querySelector('script[data-tx-profile-explorer]'))return;const s=document.createElement('script');s.async=false;s.src='profile-explorer.js?v=56';s.dataset.txProfileExplorer='1';document.head.appendChild(s)})();
 (function(){if(document.querySelector('script[data-tx-cloud]'))return;const s=document.createElement('script');s.async=false;s.src='cloud-sync.js?v=48';s.dataset.txCloud='1';document.head.appendChild(s)})();
 (function(){if(document.querySelector('script[data-tx-alerts]'))return;const s=document.createElement('script');s.async=false;s.src='alerts.js?v=48';s.dataset.txAlerts='1';document.head.appendChild(s)})();
