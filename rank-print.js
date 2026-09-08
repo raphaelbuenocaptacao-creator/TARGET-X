@@ -18,4 +18,10 @@
 })();
 
 // Mantém o módulo de upload existente no app.
-(function(){if(document.querySelector('script[data-tx-upload]'))return;const s=document.createElement('script');s.src='upload-import.js?v=44';s.dataset.txUpload='1';document.head.appendChild(s)})();
+(function(){if(document.querySelector('script[data-tx-upload]'))return;const s=document.createElement('script');s.src='upload-import.js?v=45';s.dataset.txUpload='1';document.head.appendChild(s)})();
+
+// Fonte única + nuvem protegida.
+(function(){if(document.querySelector('script[data-tx-cloud]'))return;const s=document.createElement('script');s.src='cloud-sync.js?v=45';s.dataset.txCloud='1';document.head.appendChild(s)})();
+
+// Central de alertas inteligentes. Carrega depois da nuvem para compartilhar os reconhecimentos.
+(function(){if(document.querySelector('script[data-tx-alerts]'))return;const s=document.createElement('script');s.src='alerts.js?v=45';s.dataset.txAlerts='1';document.head.appendChild(s)})();
