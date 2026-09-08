@@ -1,77 +1,41 @@
-// TARGET X — ferramentas de gestão
-METAS.couples=400; METAS.sales=100; METAS.vgv=8500000;
-
-const TX_TEAMS=['FELIPE','CLACION','A DEFINIR'];
-let teamOverrides=JSON.parse(localStorage.getItem('tx_team_overrides_v42')||'{}');
-function saveTeamOverrides(){localStorage.setItem('tx_team_overrides_v42',JSON.stringify(teamOverrides));}
-
-const renan=HIST.find(x=>x.name==='RENAN MARCONDES JOHAS');
-if(renan){renan.active=true;renan.group='FELIPE';}
-
-// Resultado oficial informado pelo gestor para 06/09/2026.
-// IDs fixos evitam duplicar esses dados ao recarregar o aplicativo.
-const OFFICIAL_0609=[
-  {id:'official-2026-09-06-josyene',date:'2026-09-06',person:'JOSYENE APARECIDA DE FREITAS',couples:2,sales:1,vgv:79000,vgv_general:79000,q:0,nq:0,notour:0,gift:0,cancelled:0,attendances:2,source:'official-0609'},
-  {id:'official-2026-09-06-manara',date:'2026-09-06',person:'MANARA ALEXANDRE SOUSA',couples:1,sales:0,vgv:0,vgv_general:0,q:0,nq:0,notour:0,gift:0,cancelled:0,attendances:1,source:'official-0609'},
-  {id:'official-2026-09-06-clacion',date:'2026-09-06',person:'CLACION DE SOUZA BRAGA FILHO',couples:1,sales:0,vgv:0,vgv_general:0,q:0,nq:0,notour:0,gift:0,cancelled:0,attendances:1,source:'official-0609'},
-  {id:'official-2026-09-06-marcio',date:'2026-09-06',person:'MARCIO VINICIOS MARTINS ALFAIA',couples:3,sales:0,vgv:0,vgv_general:0,q:0,nq:0,notour:0,gift:0,cancelled:0,attendances:3,source:'official-0609'},
-  {id:'official-2026-09-06-otavio',date:'2026-09-06',person:'OTAVIO JOSE DE OLIVEIRA MARTINS',couples:2,sales:0,vgv:0,vgv_general:0,q:0,nq:0,notour:0,gift:0,cancelled:0,attendances:2,source:'official-0609'},
-  {id:'official-2026-09-06-andre',date:'2026-09-06',person:'ANDRE LUIS CARRIÇO DOS SANTOS',couples:3,sales:0,vgv:0,vgv_general:0,q:0,nq:0,notour:0,gift:0,cancelled:0,attendances:3,source:'official-0609'},
-  {id:'official-2026-09-06-leandra',date:'2026-09-06',person:'LETICIA LEANDRA DE TOLEDO',couples:1,sales:0,vgv:0,vgv_general:0,q:0,nq:0,notour:0,gift:0,cancelled:0,attendances:1,source:'official-0609'},
-  {id:'official-2026-09-06-larissa',date:'2026-09-06',person:'LARISSA MARIA RIBEIRO',couples:3,sales:0,vgv:0,vgv_general:0,q:0,nq:0,notour:0,gift:0,cancelled:0,attendances:3,source:'official-0609'},
-  {id:'official-2026-09-06-renan',date:'2026-09-06',person:'RENAN MARCONDES JOHAS',couples:1,sales:0,vgv:0,vgv_general:0,q:0,nq:0,notour:0,gift:0,cancelled:0,attendances:1,source:'official-0609'}
-];
-OFFICIAL_0609.forEach(x=>{if(!launches.some(l=>l.id===x.id))launches.push(x);});
-saveState();
-
-const _effectivePerson=effectivePerson;
-effectivePerson=function(name){const p=_effectivePerson(name);if(teamOverrides[name])p.group=teamOverrides[name];return p;};
-function teamOptions(current){return TX_TEAMS.map(g=>`<option value="${g}" ${g===(current||'A DEFINIR')?'selected':''}>${g}</option>`).join('');}
-
-renderTeams=function(){
-  $('teamGrid').innerHTML=TX_TEAMS.map(g=>{
-    const members=HIST.filter(x=>x.active).map(x=>effectivePerson(x.name)).filter(x=>(x.group||'A DEFINIR')===g);
-    const agg=members.reduce((a,p)=>plus(a,personMonth(p.name,9)),blank());
-    return `<div class="card"><div class="label">Equipe</div><h2>${g}</h2><div class="stats" style="grid-template-columns:repeat(3,1fr)">${stat('Casais',num(agg.couples))}${stat('Vendas',num(agg.sales))}${stat('VGV',money(agg.vgv))}</div><div style="margin-top:10px">${members.map(p=>{const s=personMonth(p.name,9);return `<div class="member" style="display:grid;grid-template-columns:minmax(0,1fr) 185px;gap:10px;align-items:center"><div><b>${p.name}</b><span class="tiny">${num(s.couples)} casais • ${num(s.sales)} vendas • ${money(s.vgv)}</span></div><div><div class="tiny">Definir equipe</div><select class="tx-team-picker" data-person="${encodeURIComponent(p.name)}" style="width:100%;padding:8px 10px">${teamOptions(p.group)}</select></div></div>`}).join('')||'<div class="empty">Nenhum profissional nesta equipe.</div>'}</div></div>`;
-  }).join('');
-  document.querySelectorAll('.tx-team-picker').forEach(sel=>sel.onchange=()=>{const n=decodeURIComponent(sel.dataset.person);teamOverrides[n]=sel.value;saveTeamOverrides();renderTeams();renderRank();if(profilePerson.value===n)renderProfile();});
-};
-
-const _renderProfile=renderProfile;
-renderProfile=function(){_renderProfile();const n=profilePerson.value||allPeople()[0],p=effectivePerson(n),role=$('profileRole');if(!role)return;role.innerHTML=`<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span>${p.role||'CAPTADOR'} • ${p.active?'ATIVO':'INATIVO'}</span><span class="tiny">Equipe atual:</span><select id="profileGroup">${teamOptions(p.group)}</select></div>`;$('profileGroup').onchange=()=>{teamOverrides[n]=$('profileGroup').value;saveTeamOverrides();renderProfile();renderRank();renderTeams();};};
-profilePerson.onchange=renderProfile;
-
-const rankPage=$('rank'),rankFilters=rankPage?.querySelector('.filters');
-if(rankFilters&&!$('rankPeriod')){const w=document.createElement('div');w.className='card';w.style.marginBottom='10px';w.innerHTML=`<div class="label" style="margin-bottom:7px">Período do ranking</div><select id="rankPeriod" style="width:100%"><option value="year">Ano 2026</option>${['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro'].map((m,i)=>`<option value="${i+1}">${m} 2026</option>`).join('')}</select>`;rankFilters.parentNode.insertBefore(w,rankFilters);}
-function txRankPerson(name){const period=$('rankPeriod')?.value||'year',base=effectivePerson(name);if(period==='year')return base;const metrics=personMonth(name,Number(period));return {...base,...metrics,name:base.name,active:base.active,group:base.group,role:base.role};}
-filteredRank=function(){let a=allPeople().map(txRankPerson),q=$('rankSearch').value.trim().toUpperCase(),st=$('rankStatus').value,k=$('rankMetric').value;if(q)a=a.filter(x=>x.name.includes(q));if(st==='active')a=a.filter(x=>x.active);if(st==='inactive')a=a.filter(x=>!x.active);a.sort((x,y)=>k==='conversion'?(y.sales/(convBase(y)||1))-(x.sales/(convBase(x)||1)):(y[k]||0)-(x[k]||0));return a;};
-renderRank=function(){const a=filteredRank(),tot=a.reduce((z,x)=>plus(z,x),blank()),p=$('rankPeriod')?.value||'year',title=rankPage?.querySelector('.section h2');if(title)title.textContent=p==='year'?'Ranking Geral 2026':`Ranking ${MONTH_NAMES[Number(p)]} 2026`;$('rankSummary').innerHTML=[stat('Profissionais',num(a.length)),stat('Casais',num(tot.couples)),stat('Vendas',num(tot.sales)),stat('VGV Ativo',money(tot.vgv)),stat('VGV Geral',money(tot.vgv_general)),stat('NoTour',num(tot.notour)),stat('Brindes',money(tot.gift),`Custo/casal ${money(tot.couples?tot.gift/tot.couples:0,2)}`)].join('');$('rankBody').innerHTML=a.map((x,i)=>`<tr><td><b>${i+1}º</b></td><td><span class="nameLink" data-name="${x.name.replace(/"/g,'&quot;')}">${x.name}</span><div class="tiny">${x.group||''}</div></td><td><span class="pill ${x.active?'':'off'}">${x.active?'ATIVO':'INATIVO'}</span></td><td>${num(x.couples)}</td><td>${num(x.q)}</td><td>${num(x.nq)}</td><td>${num(x.sales)}</td><td>${conv(x)}</td><td>${money(x.vgv_general)}</td><td><b>${money(x.vgv)}</b></td><td>${money(x.gift)}</td><td>${money(x.couples?x.gift/x.couples:0,2)}</td><td>${num(x.notour)}</td><td>${num(x.cancelled)}</td></tr>`).join('');document.querySelectorAll('#rank .nameLink').forEach(el=>el.onclick=()=>{profilePerson.value=el.dataset.name;show('profile')});};
-if($('rankPeriod'))$('rankPeriod').onchange=renderRank;$('rankMetric').onchange=renderRank;$('rankStatus').onchange=renderRank;$('rankSearch').oninput=renderRank;
-
-const metaCards=document.querySelectorAll('#dashboard .hero .card');if(metaCards[1]){const line=metaCards[1].querySelector('b');if(line)line.textContent='100 vendas • 400 casais';}
-
+// TARGET X v6 — gestão limpa: equipes + Capitão da Semana, sem lançamentos manuais
 (function(){
-  const style=document.createElement('style');style.textContent=`.captainHero{display:grid;grid-template-columns:1.35fr .65fr;gap:11px}.captainName{font-size:clamp(30px,6vw,58px);line-height:1;font-weight:1000;letter-spacing:-2px;margin:10px 0;color:var(--green)}.quick3{display:grid;grid-template-columns:160px minmax(220px,1fr) 140px;gap:8px}.weekNav{display:grid;grid-template-columns:1fr 1fr;gap:8px}.weekNav select{grid-column:1/-1}@media(max-width:720px){.captainHero,.quick3,.weekNav{grid-template-columns:1fr}.captainName{font-size:36px}}`;document.head.appendChild(style);
-  const nav=document.querySelector('.tabs');
-  if(nav&&!$('captainTab')){const b=document.createElement('button');b.className='tab';b.id='captainTab';b.dataset.page='captain';b.textContent='Capitão da Semana';const diaryTab=[...nav.querySelectorAll('.tab')].find(x=>x.dataset.page==='diary');nav.insertBefore(b,diaryTab||null);b.onclick=()=>{show('captain');renderCaptain();};}
-  if(!$('captain')){const page=document.createElement('section');page.className='page';page.id='captain';page.innerHTML=`<div class="section"><div><h2>Capitão da Semana</h2><div class="meta">Sempre de segunda a domingo • maior número de casais</div></div></div><div class="card weekNav"><select id="weekSelect"></select><button id="weekPrev">← Semana anterior</button><button id="weekNext">Próxima semana →</button><span class="meta" id="weekRange" style="grid-column:1/-1"></span></div><div class="captainHero" style="margin-top:11px"><div class="card"><div class="label" id="captainStatus">Capitão/Capitã da Semana</div><div class="captainName" id="captainName">—</div><b id="captainResult">0 casais</b><div class="meta" style="margin-top:8px">Desempate por vendas.</div></div><div class="card"><div class="label">Premiação</div><b style="display:block;font-size:27px;margin:9px 0">R$ 200</b><div>Voucher</div><div class="green" style="font-weight:900;margin-top:9px">✓ Livre na semana</div></div></div><div class="section"><div><h2>Lançamento rápido de casais</h2><div class="meta">Complete o resultado do dia.</div></div></div><div class="card"><div class="quick3"><input id="quickDate" type="date"><select id="quickPerson"></select><input id="quickCouples" type="number" min="1" placeholder="Qtd. casais"></div><div class="actions"><button class="primary" id="quickSave">Adicionar casais</button></div></div><div class="section"><h2>Ranking da semana</h2><span class="meta" id="weeklyTotal"></span></div><div class="card"><div class="tablewrap"><table class="table" style="min-width:650px"><thead><tr><th>#</th><th>Profissional</th><th>Equipe</th><th>Casais</th><th>Vendas</th></tr></thead><tbody id="weeklyBody"></tbody></table></div></div><div class="section"><h2>Lançamentos rápidos da semana</h2></div><div class="card"><div class="tablewrap"><table class="table" style="min-width:650px"><thead><tr><th>Data</th><th>Profissional</th><th>Casais</th><th></th></tr></thead><tbody id="quickBody"></tbody></table></div></div>`;$('teams').parentNode.insertBefore(page,$('teams'));}
+  const $=id=>document.getElementById(id);
+  const TEAM_STORE='tx_team_overrides_v60';
+  let overrides={};try{overrides=JSON.parse(localStorage.getItem(TEAM_STORE)||'{}')}catch{}
+  const save=()=>localStorage.setItem(TEAM_STORE,JSON.stringify(overrides));
+  const TEAMS=['CLACION','FELIPE','A DEFINIR'];
+  const baseEffective=effectivePerson;
+  effectivePerson=function(name){const p=baseEffective(name);if(overrides[name])p.group=overrides[name];return p};
+  const teamOptions=g=>TEAMS.map(x=>`<option value="${x}" ${x===(g||'A DEFINIR')?'selected':''}>${x}</option>`).join('');
+
+  const baseRenderTeams=renderTeams;
+  renderTeams=function(){
+    const root=$('teamGrid');if(!root)return;
+    root.innerHTML=TEAMS.map(g=>{
+      const members=allPeople().filter(n=>effectivePerson(n).active&&(effectivePerson(n).group||'A DEFINIR')===g);
+      const a=members.reduce((z,n)=>plus(z,personMonth(n,9)),blank());
+      return `<div class="card"><div class="label">Equipe</div><h2>${g}</h2><div class="stats" style="grid-template-columns:repeat(3,1fr)">${stat('Casais',num(a.couples))}${stat('Vendas',num(a.sales))}${stat('VGV',money(a.vgv))}</div><div style="margin-top:10px">${members.map(n=>{const s=personMonth(n,9),p=effectivePerson(n);return `<div class="member" style="display:grid;grid-template-columns:minmax(0,1fr) 180px;gap:8px;align-items:center"><div><b>${esc(n)}</b><span class="tiny">${num(s.couples)} casais • ${num(s.sales)} vendas • ${money(s.vgv)}</span></div><select class="txTeam" data-name="${encodeURIComponent(n)}">${teamOptions(p.group)}</select></div>`}).join('')||'<div class="empty">Nenhum profissional.</div>'}</div></div>`;
+    }).join('');
+    document.querySelectorAll('.txTeam').forEach(s=>s.onchange=()=>{const n=decodeURIComponent(s.dataset.name);overrides[n]=s.value;save();renderTeams();renderRank();if($('profilePerson')?.value===n)renderProfile()});
+  };
+
+  const baseRenderProfile=renderProfile;
+  renderProfile=function(){baseRenderProfile();const n=$('profilePerson')?.value,p=effectivePerson(n),role=$('profileRole');if(!n||!role)return;role.innerHTML=`<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span>${esc(p.role||'CAPTADOR')} • ${p.active?'ATIVO':'INATIVO'}</span><span class="tiny">Equipe:</span><select id="profileGroup">${teamOptions(p.group)}</select></div>`;$('profileGroup').onchange=()=>{overrides[n]=$('profileGroup').value;save();renderProfile();renderRank();renderTeams()}};
 
   let WEEK_HISTORY={};
-  const localDate=s=>new Date(s+'T12:00:00');
   const iso=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-  const br=s=>s.split('-').reverse().join('/');
-  function endOfWeek(start){const d=localDate(start);d.setDate(d.getDate()+6);return iso(d);}
-  function weekStartFor(date){const d=localDate(date),off=(d.getDay()+6)%7;d.setDate(d.getDate()-off);return iso(d);}
-  function refreshPeople(){const cur=$('quickPerson')?.value;$('quickPerson').innerHTML=HIST.filter(x=>x.active).map(x=>x.name).sort().map(n=>`<option>${n}</option>`).join('');if(cur&&[...$('quickPerson').options].some(o=>o.value===cur))$('quickPerson').value=cur;}
-  function availableWeeks(){const set=new Set(Object.keys(WEEK_HISTORY));launches.forEach(x=>{if(x.date)set.add(weekStartFor(x.date));});return [...set].sort();}
-  function fillWeekSelect(prefer){const weeks=availableWeeks();const sel=$('weekSelect');const current=prefer||sel.value||weeks[weeks.length-1];sel.innerHTML=weeks.map(s=>`<option value="${s}">${br(s)} → ${br(endOfWeek(s))}</option>`).join('');sel.value=weeks.includes(current)?current:weeks[weeks.length-1];}
-  function selectedWeek(){const start=$('weekSelect').value,end=endOfWeek(start);return {start,end};}
-  function weeklyRanking(){const w=selectedWeek(),map={};(WEEK_HISTORY[w.start]||[]).forEach(([name,c,s])=>map[name]={name,couples:Number(c)||0,sales:Number(s)||0});launches.filter(x=>x.date&&x.date>=w.start&&x.date<=w.end).forEach(x=>{if(!x.person)return;map[x.person]||(map[x.person]={name:x.person,couples:0,sales:0});map[x.person].couples+=Number(x.couples)||0;map[x.person].sales+=Number(x.sales)||0;});return Object.values(map).filter(x=>x.couples>0||x.sales>0).map(x=>{const p=effectivePerson(x.name);return {...x,group:p.group||'A DEFINIR'};}).sort((a,b)=>b.couples-a.couples||b.sales-a.sales||a.name.localeCompare(b.name));}
-  window.renderCaptain=function(){if(!$('captain')||!$('weekSelect').value)return;refreshPeople();const w=selectedWeek(),rank=weeklyRanking(),leader=rank[0];$('weekRange').textContent=`${br(w.start)} → ${br(w.end)} • segunda a domingo`;$('captainStatus').textContent=w.end<'2026-09-07'?'CAPITÃO/CAPITÃ DA SEMANA':'LÍDER PROVISÓRIO DA SEMANA';$('captainName').textContent=leader?leader.name:'—';$('captainResult').textContent=leader?`${num(leader.couples)} casais • ${num(leader.sales)} vendas`:'Sem resultado nesta semana';$('weeklyTotal').textContent=`${num(rank.reduce((a,x)=>a+x.couples,0))} casais`;$('weeklyBody').innerHTML=rank.length?rank.map((x,i)=>`<tr><td><b>${i+1}º</b></td><td><span class="nameLink" data-week-person="${x.name.replace(/"/g,'&quot;')}">${x.name}</span></td><td>${x.group}</td><td><b>${num(x.couples)}</b></td><td>${num(x.sales)}</td></tr>`).join(''):'<tr><td colspan="5" class="empty">Sem resultado para esta semana.</td></tr>';document.querySelectorAll('[data-week-person]').forEach(el=>el.onclick=()=>{if([...profilePerson.options].some(o=>o.value===el.dataset.weekPerson)){profilePerson.value=el.dataset.weekPerson;show('profile')}});const quick=launches.filter(x=>x.date&&x.date>=w.start&&x.date<=w.end&&(x.source==='quick-couples'||x.source==='official-0609')).sort((a,b)=>b.date.localeCompare(a.date));$('quickBody').innerHTML=quick.length?quick.map(x=>`<tr><td>${br(x.date)}</td><td>${x.person}</td><td>${num(x.couples)}</td><td>${x.source==='official-0609'?'OFICIAL':`<button data-del-quick="${x.id}">Excluir</button>`}</td></tr>`).join(''):'<tr><td colspan="4" class="empty">Nenhum lançamento nesta semana.</td></tr>';document.querySelectorAll('[data-del-quick]').forEach(b=>b.onclick=()=>{launches=launches.filter(x=>x.id!==b.dataset.delQuick);saveState();fillWeekSelect(w.start);renderCaptain();renderDashboard();renderRank();renderSeptember();renderLaunches();});};
-  $('weekSelect').onchange=renderCaptain;$('weekPrev').onclick=()=>{const weeks=availableWeeks(),i=weeks.indexOf($('weekSelect').value);if(i>0){$('weekSelect').value=weeks[i-1];renderCaptain();}};$('weekNext').onclick=()=>{const weeks=availableWeeks(),i=weeks.indexOf($('weekSelect').value);if(i>=0&&i<weeks.length-1){$('weekSelect').value=weeks[i+1];renderCaptain();}};
-  $('quickSave').onclick=()=>{const date=$('quickDate').value,person=$('quickPerson').value,couples=Number($('quickCouples').value)||0;if(!date||!person||couples<=0)return alert('Informe data, profissional e quantidade de casais.');launches.push({id:String(Date.now()),date,person,couples,sales:0,vgv:0,vgv_general:0,q:0,nq:0,notour:0,gift:0,cancelled:0,attendances:couples,source:'quick-couples'});saveState();$('quickCouples').value='';fillWeekSelect(weekStartFor(date));renderCaptain();renderDashboard();renderRank();renderSeptember();renderLaunches();renderProfile();};
-
-  fetch('weekly-history.json?v=43').then(r=>r.json()).then(data=>{WEEK_HISTORY=data||{};fillWeekSelect('2026-08-31');$('quickDate').value='2026-09-06';renderCaptain();}).catch(()=>{fillWeekSelect();renderCaptain();});
+  const dlocal=s=>new Date(s+'T12:00:00');
+  const weekStartFor=s=>{const d=dlocal(s),off=(d.getDay()+6)%7;d.setDate(d.getDate()-off);return iso(d)};
+  const weekEnd=s=>{const d=dlocal(s);d.setDate(d.getDate()+6);return iso(d)};
+  const br=s=>String(s||'').split('-').reverse().join('/');
+  function availableWeeks(){const set=new Set(Object.keys(WEEK_HISTORY));const rows=window.TX?.getRows?.()||[];rows.forEach(r=>r.date&&set.add(weekStartFor(r.date)));const through=window.TX?.getMeta?.().through||DATA_META.through;if(!set.size&&through)set.add(weekStartFor(through));return [...set].sort()}
+  function rankingFromRows(start){const end=weekEnd(start),rows=(window.TX?.getRows?.()||[]).filter(r=>r.date>=start&&r.date<=end),m={};rows.forEach(r=>{const n=r.person;if(!n)return;m[n]||(m[n]={name:n,couples:0,sales:0});m[n].couples+=Number(r.couples)||0;m[n].sales+=Number(r.sales)||0});return Object.values(m)}
+  function rankingFor(start){const fresh=rankingFromRows(start);const src=fresh.length?fresh:(WEEK_HISTORY[start]||[]).map(x=>({name:x[0],couples:Number(x[1])||0,sales:Number(x[2])||0}));return src.filter(x=>effectivePerson(x.name).active).sort((a,b)=>b.couples-a.couples||b.sales-a.sales||a.name.localeCompare(b.name))}
+  function fillWeeks(prefer){const sel=$('weekSelect');if(!sel)return;const weeks=availableWeeks(),keep=prefer||sel.value||weeks.at(-1);sel.innerHTML=weeks.map(s=>`<option value="${s}">${br(s)} → ${br(weekEnd(s))}</option>`).join('');sel.value=weeks.includes(keep)?keep:weeks.at(-1)||''}
+  window.renderCaptain=function(){const sel=$('weekSelect');if(!sel)return;if(!sel.options.length)fillWeeks();const start=sel.value;if(!start)return;const rr=rankingFor(start),top=rr[0];$('weekRange').textContent=`${br(start)} → ${br(weekEnd(start))} • segunda a domingo`;$('captainName').textContent=top?.name||'—';$('captainResult').textContent=top?`${num(top.couples)} casais • ${num(top.sales)} vendas`:'Sem dados';$('weeklyTotal').textContent=`${num(rr.reduce((s,x)=>s+x.couples,0))} casais na semana`;$('weeklyBody').innerHTML=rr.length?rr.map((x,i)=>`<tr><td><b>${i+1}º</b></td><td>${esc(x.name)}</td><td>${esc(effectivePerson(x.name).group||'A DEFINIR')}</td><td><b>${num(x.couples)}</b></td><td>${num(x.sales)}</td></tr>`).join(''):'<tr><td colspan="5" class="empty">Sem dados para esta semana.</td></tr>'};
+  if($('weekSelect'))$('weekSelect').onchange=()=>window.renderCaptain();
+  fetch('weekly-history.json?v=60',{cache:'no-store'}).then(r=>r.ok?r.json():{}).then(j=>{WEEK_HISTORY=j||{};fillWeeks();window.renderCaptain()}).catch(()=>{fillWeeks();window.renderCaptain()});
+  window.addEventListener('targetx:data-updated',()=>{fillWeeks($('weekSelect')?.value);renderTeams();window.renderCaptain()});
+  renderTeams();window.renderCaptain();
 })();
-
-renderDashboard();renderSeptember();renderProfile();renderRank();renderTeams();
