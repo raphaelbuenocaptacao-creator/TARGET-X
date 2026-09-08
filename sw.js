@@ -1,5 +1,5 @@
 const CACHE_PREFIX='target-x-shell-';
-const CACHE_VERSION='v56-20260908-income-explorer';
+const CACHE_VERSION='v57-20260908-click-freeze-fix';
 const CACHE=`${CACHE_PREFIX}${CACHE_VERSION}`;
 const APP_SHELL=['./','./index.html','./hist-2026.js','./app.js','./manager-tools.js','./print-mode.js','./rank-print.js','./official-0607-corrected.js','./upload-import.js','./client-profile.js','./profile-explorer.js','./cloud-sync.js','./alerts.js','./weekly-history.json','./manifest.webmanifest','./icon-192.png','./icon-512.png'];
 const SENSITIVE_PATH=/(?:^|\/)(?:api|auth|login|logout|session|sessions|token|tokens|account|accounts|profile|admin|private|user|users)(?:\/|$)/i;
