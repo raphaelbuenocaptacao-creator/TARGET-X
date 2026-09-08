@@ -1,5 +1,5 @@
 const CACHE_PREFIX='target-x-shell-';
-const CACHE_VERSION='v50-20260908-fixed-profile-tabs';
+const CACHE_VERSION='v51-20260908-couples-risk-profile';
 const CACHE=`${CACHE_PREFIX}${CACHE_VERSION}`;
 const APP_SHELL=['./','./index.html','./hist-2026.js','./app.js','./manager-tools.js','./print-mode.js','./rank-print.js','./official-0607-corrected.js','./upload-import.js','./client-profile.js','./cloud-sync.js','./alerts.js','./weekly-history.json','./manifest.webmanifest','./icon-192.png','./icon-512.png'];
 const SENSITIVE_PATH=/(?:^|\/)(?:api|auth|login|logout|session|sessions|token|tokens|account|accounts|profile|admin|private|user|users)(?:\/|$)/i;
