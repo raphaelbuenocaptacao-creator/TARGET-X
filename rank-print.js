@@ -1,117 +1,26 @@
-// TARGET X — resultado oficial de 07/09/2026 informado pelo gestor
+// TARGET X — dados oficiais 07/09 + print do ranking + importador
 const OFFICIAL_0709=[
-  {id:'official-2026-09-07-clacion',date:'2026-09-07',person:'CLACION DE SOUZA BRAGA FILHO',couples:1,sales:0,vgv:0,vgv_general:0,q:0,nq:0,notour:0,gift:0,cancelled:0,attendances:1,source:'official-0709'},
-  {id:'official-2026-09-07-leandra',date:'2026-09-07',person:'LETICIA LEANDRA DE TOLEDO',couples:1,sales:0,vgv:0,vgv_general:0,q:0,nq:0,notour:0,gift:0,cancelled:0,attendances:1,source:'official-0709'},
-  {id:'official-2026-09-07-josyene',date:'2026-09-07',person:'JOSYENE APARECIDA DE FREITAS',couples:1,sales:1,vgv:80000,vgv_general:80000,q:0,nq:0,notour:0,gift:0,cancelled:0,attendances:1,source:'official-0709'},
-  {id:'official-2026-09-07-paulo',date:'2026-09-07',person:'PAULO VICTOR ORTIZ',couples:2,sales:0,vgv:0,vgv_general:0,q:0,nq:0,notour:0,gift:0,cancelled:0,attendances:2,source:'official-0709'},
-  {id:'official-2026-09-07-otavio',date:'2026-09-07',person:'OTAVIO JOSE DE OLIVEIRA MARTINS',couples:4,sales:0,vgv:0,vgv_general:0,q:0,nq:0,notour:0,gift:0,cancelled:0,attendances:4,source:'official-0709'},
-  {id:'official-2026-09-07-manara',date:'2026-09-07',person:'MANARA ALEXANDRE SOUSA',couples:2,sales:0,vgv:0,vgv_general:0,q:0,nq:0,notour:0,gift:0,cancelled:0,attendances:2,source:'official-0709'},
-  {id:'official-2026-09-07-carol',date:'2026-09-07',person:'ANA CAROLINE DA SILVA LOPES PEREIRA',couples:1,sales:1,vgv:80000,vgv_general:80000,q:0,nq:0,notour:0,gift:0,cancelled:0,attendances:1,source:'official-0709'},
-  {id:'official-2026-09-07-andre',date:'2026-09-07',person:'ANDRE LUIS CARRIÇO DOS SANTOS',couples:4,sales:0,vgv:0,vgv_general:0,q:0,nq:0,notour:0,gift:0,cancelled:0,attendances:4,source:'official-0709'},
-  {id:'official-2026-09-07-renan',date:'2026-09-07',person:'RENAN MARCONDES JOHAS',couples:3,sales:0,vgv:0,vgv_general:0,q:0,nq:0,notour:0,gift:0,cancelled:0,attendances:3,source:'official-0709'}
-];
-OFFICIAL_0709.forEach(x=>{if(!launches.some(l=>l.id===x.id))launches.push(x);});
-saveState();
-setTimeout(()=>{
-  try{renderDashboard();renderRank();renderSeptember();renderProfile();renderTeams();if(window.renderCaptain)renderCaptain();}catch(e){}
-},0);
+{id:'official-2026-09-07-clacion',date:'2026-09-07',person:'CLACION DE SOUZA BRAGA FILHO',couples:1,sales:0,vgv:0,vgv_general:0,q:0,nq:0,notour:0,gift:0,cancelled:0,attendances:1,source:'official-0709'},
+{id:'official-2026-09-07-leandra',date:'2026-09-07',person:'LETICIA LEANDRA DE TOLEDO',couples:1,sales:0,vgv:0,vgv_general:0,q:0,nq:0,notour:0,gift:0,cancelled:0,attendances:1,source:'official-0709'},
+{id:'official-2026-09-07-josyene',date:'2026-09-07',person:'JOSYENE APARECIDA DE FREITAS',couples:1,sales:1,vgv:80000,vgv_general:80000,q:0,nq:0,notour:0,gift:0,cancelled:0,attendances:1,source:'official-0709'},
+{id:'official-2026-09-07-paulo',date:'2026-09-07',person:'PAULO VICTOR ORTIZ',couples:2,sales:0,vgv:0,vgv_general:0,q:0,nq:0,notour:0,gift:0,cancelled:0,attendances:2,source:'official-0709'},
+{id:'official-2026-09-07-otavio',date:'2026-09-07',person:'OTAVIO JOSE DE OLIVEIRA MARTINS',couples:4,sales:0,vgv:0,vgv_general:0,q:0,nq:0,notour:0,gift:0,cancelled:0,attendances:4,source:'official-0709'},
+{id:'official-2026-09-07-manara',date:'2026-09-07',person:'MANARA ALEXANDRE SOUSA',couples:2,sales:0,vgv:0,vgv_general:0,q:0,nq:0,notour:0,gift:0,cancelled:0,attendances:2,source:'official-0709'},
+{id:'official-2026-09-07-carol',date:'2026-09-07',person:'ANA CAROLINE DA SILVA LOPES PEREIRA',couples:1,sales:1,vgv:80000,vgv_general:80000,q:0,nq:0,notour:0,gift:0,cancelled:0,attendances:1,source:'official-0709'},
+{id:'official-2026-09-07-andre',date:'2026-09-07',person:'ANDRE LUIS CARRIÇO DOS SANTOS',couples:4,sales:0,vgv:0,vgv_general:0,q:0,nq:0,notour:0,gift:0,cancelled:0,attendances:4,source:'official-0709'},
+{id:'official-2026-09-07-renan',date:'2026-09-07',person:'RENAN MARCONDES JOHAS',couples:3,sales:0,vgv:0,vgv_general:0,q:0,nq:0,notour:0,gift:0,cancelled:0,attendances:3,source:'official-0709'}];
+OFFICIAL_0709.forEach(x=>{if(!launches.some(l=>l.id===x.id))launches.push(x)});saveState();
+setTimeout(()=>{try{renderDashboard();renderRank();renderSeptember();renderProfile();renderTeams();if(window.renderCaptain)renderCaptain()}catch(e){}},0);
 
-// TARGET X — modo print do ranking mensal/anual
 (function(){
-  const css=document.createElement('style');
-  css.textContent=`
-  #rankPrintBtn{margin-left:auto;background:var(--green);color:#051006;border-color:var(--green)}
-  #rankPrintOverlay{display:none;position:fixed;inset:0;z-index:10000;background:#020604;overflow:auto;padding:8px}
-  #rankPrintOverlay.open{display:block}
-  .rankPrintSheet{max-width:820px;margin:0 auto;background:linear-gradient(180deg,#0b1b13,#07100c);border:1px solid #183b2b;border-radius:16px;padding:12px}
-  .rankPrintHead{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;border-bottom:1px solid #183b2b;padding-bottom:9px}
-  .rankPrintBrand{font-size:9px;letter-spacing:1.4px;color:#85aa98}.rankPrintTitle{font-size:22px;font-weight:1000;margin:2px 0}.rankPrintPeriod{color:#b8ff2c;font-size:12px;font-weight:900}
-  .rankPrintMain{text-align:right}.rankPrintMain small{display:block;color:#85aa98;font-size:8px;letter-spacing:1px;text-transform:uppercase}.rankPrintMain b{display:block;color:#b8ff2c;font-size:24px;line-height:1.05}.rankPrintMain span{font-size:9px;color:#85aa98}
-  .rankPrintStats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:8px 0}.rankPrintStat{border:1px solid #183b2b;border-radius:9px;padding:6px 7px;background:#07120d}.rankPrintStat small{display:block;color:#85aa98;font-size:7px;letter-spacing:.8px;text-transform:uppercase}.rankPrintStat b{display:block;font-size:12px;margin-top:2px}
-  .rankPrintTable{width:100%;border-collapse:collapse;font-size:9px}.rankPrintTable th{color:#85aa98;text-transform:uppercase;font-size:7px;letter-spacing:.6px;border-bottom:1px solid #183b2b;padding:4px 3px;text-align:left}.rankPrintTable td{border-bottom:1px solid #13261e;padding:4px 3px;vertical-align:middle}.rankPrintTable td:nth-child(1){width:28px;font-weight:1000}.rankPrintTable td:nth-child(2){font-weight:900}.rankPrintTable td:nth-child(3),.rankPrintTable td:nth-child(4),.rankPrintTable td:nth-child(5),.rankPrintTable td:nth-child(6){text-align:right;white-space:nowrap}.rankPrintVgv{color:#b8ff2c;font-weight:1000}
-  .rankPrintFoot{display:flex;justify-content:space-between;gap:8px;margin-top:8px;padding-top:7px;border-top:1px solid #183b2b;color:#85aa98;font-size:8px}.rankPrintActions{max-width:820px;margin:8px auto;display:flex;gap:8px}.rankPrintActions button{flex:1}
-  @media(max-width:520px){#rankPrintOverlay{padding:3px}.rankPrintSheet{padding:7px;border-radius:10px}.rankPrintTitle{font-size:17px}.rankPrintMain b{font-size:19px}.rankPrintStats{gap:3px;margin:5px 0}.rankPrintStat{padding:4px}.rankPrintStat small{font-size:6px}.rankPrintStat b{font-size:9px}.rankPrintTable{font-size:7.2px}.rankPrintTable th{font-size:5.8px;padding:2.5px 2px}.rankPrintTable td{padding:2.5px 2px}.rankPrintTable td:nth-child(2){max-width:155px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rankPrintFoot{font-size:6.5px;margin-top:5px;padding-top:4px}}
-  `;
-  document.head.appendChild(css);
-
-  function ensureButton(){
-    const section=document.querySelector('#rank .section');
-    if(!section||document.getElementById('rankPrintBtn'))return;
-    const btn=document.createElement('button');
-    btn.id='rankPrintBtn';
-    btn.textContent='📸 Modo Print';
-    section.appendChild(btn);
-    btn.onclick=openRankPrint;
-  }
-
-  function textFromSummary(label){
-    const cards=[...document.querySelectorAll('#rankSummary .stat')];
-    const card=cards.find(c=>c.querySelector('.label')?.innerText.trim().toUpperCase()===label.toUpperCase());
-    return card?.querySelector('b')?.innerText.trim()||'—';
-  }
-
-  function rankRows(){
-    return [...document.querySelectorAll('#rankBody tr')].map(tr=>{
-      const td=tr.querySelectorAll('td');
-      if(td.length<10)return null;
-      return {
-        pos:td[0].innerText.trim(),
-        name:td[1].innerText.trim().split('\n')[0],
-        couples:td[3].innerText.trim(),
-        sales:td[6].innerText.trim(),
-        vgvGeneral:td[8].innerText.trim(),
-        vgvAtivo:td[9].innerText.trim()
-      };
-    }).filter(Boolean);
-  }
-
-  function currentPeriod(){
-    const sel=document.getElementById('rankPeriod');
-    return sel?.options[sel.selectedIndex]?.text||document.querySelector('#rank .section h2')?.innerText||'Ranking 2026';
-  }
-
-  function openRankPrint(){
-    const rows=rankRows();
-    if(!rows.length){alert('Não há dados para este ranking.');return;}
-    let ov=document.getElementById('rankPrintOverlay');
-    if(!ov){ov=document.createElement('div');ov.id='rankPrintOverlay';document.body.appendChild(ov);}
-    const period=currentPeriod();
-    const vgvGeral=textFromSummary('VGV Geral');
-    const vgvAtivo=textFromSummary('VGV Ativo');
-    const couples=textFromSummary('Casais');
-    const sales=textFromSummary('Vendas');
-    const professionals=textFromSummary('Profissionais');
-    const notour=textFromSummary('NoTour');
-    const gifts=textFromSummary('Brindes');
-
-    ov.innerHTML=`<div class="rankPrintSheet">
-      <div class="rankPrintHead">
-        <div><div class="rankPrintBrand">TARGET X • PERFORMANCE COMMAND</div><div class="rankPrintTitle">RANKING DE PERFORMANCE</div><div class="rankPrintPeriod">${period}</div></div>
-        <div class="rankPrintMain"><small>VGV GERAL</small><b>${vgvGeral}</b><span>Indicador principal</span></div>
-      </div>
-      <div class="rankPrintStats">
-        <div class="rankPrintStat"><small>Profissionais</small><b>${professionals}</b></div>
-        <div class="rankPrintStat"><small>Casais</small><b>${couples}</b></div>
-        <div class="rankPrintStat"><small>Vendas</small><b>${sales}</b></div>
-        <div class="rankPrintStat"><small>VGV Ativo</small><b>${vgvAtivo}</b></div>
-        <div class="rankPrintStat"><small>NoTour</small><b>${notour}</b></div>
-        <div class="rankPrintStat"><small>Brindes</small><b>${gifts}</b></div>
-        <div class="rankPrintStat"><small>Métrica principal</small><b>VGV</b></div>
-        <div class="rankPrintStat"><small>Status</small><b>ATIVOS</b></div>
-      </div>
-      <table class="rankPrintTable"><thead><tr><th>#</th><th>Profissional</th><th>Casais</th><th>Vendas</th><th>VGV Geral</th><th>VGV Ativo</th></tr></thead><tbody>
-      ${rows.map(r=>`<tr><td>${r.pos}</td><td>${r.name}</td><td>${r.couples}</td><td>${r.sales}</td><td class="rankPrintVgv">${r.vgvGeneral}</td><td>${r.vgvAtivo}</td></tr>`).join('')}
-      </tbody></table>
-      <div class="rankPrintFoot"><span>VGV é o principal indicador do ranking</span><span>TARGET X</span></div>
-    </div><div class="rankPrintActions"><button id="rankPrintBack">← Voltar</button><button class="primary" id="rankPrintFull">Tela cheia</button></div>`;
-    ov.classList.add('open');
-    document.getElementById('rankPrintBack').onclick=()=>ov.classList.remove('open');
-    document.getElementById('rankPrintFull').onclick=()=>{document.documentElement.requestFullscreen?.();document.getElementById('rankPrintFull').style.display='none';};
-    window.scrollTo(0,0);
-  }
-
-  const oldRenderRank=window.renderRank;
-  if(typeof oldRenderRank==='function')window.renderRank=function(){oldRenderRank();setTimeout(ensureButton,0);};
-  document.addEventListener('click',e=>{if(e.target?.dataset?.page==='rank')setTimeout(ensureButton,0)});
-  setTimeout(ensureButton,500);
+ const css=document.createElement('style');css.textContent=`#rankPrintBtn{margin-left:auto;background:var(--green);color:#051006;border-color:var(--green)}#rankPrintOverlay{display:none;position:fixed;inset:0;z-index:10000;background:#020604;overflow:auto;padding:8px}#rankPrintOverlay.open{display:block}.rankPrintSheet{max-width:820px;margin:0 auto;background:linear-gradient(180deg,#0b1b13,#07100c);border:1px solid #183b2b;border-radius:16px;padding:12px}.rankPrintHead{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;border-bottom:1px solid #183b2b;padding-bottom:9px}.rankPrintBrand{font-size:9px;letter-spacing:1.4px;color:#85aa98}.rankPrintTitle{font-size:22px;font-weight:1000;margin:2px 0}.rankPrintPeriod{color:#b8ff2c;font-size:12px;font-weight:900}.rankPrintMain{text-align:right}.rankPrintMain small{display:block;color:#85aa98;font-size:8px}.rankPrintMain b{display:block;color:#b8ff2c;font-size:24px}.rankPrintStats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:8px 0}.rankPrintStat{border:1px solid #183b2b;border-radius:9px;padding:6px 7px;background:#07120d}.rankPrintStat small{display:block;color:#85aa98;font-size:7px}.rankPrintStat b{display:block;font-size:12px;margin-top:2px}.rankPrintTable{width:100%;border-collapse:collapse;font-size:9px}.rankPrintTable th{color:#85aa98;font-size:7px;border-bottom:1px solid #183b2b;padding:4px 3px;text-align:left}.rankPrintTable td{border-bottom:1px solid #13261e;padding:4px 3px}.rankPrintTable td:nth-child(n+3){text-align:right;white-space:nowrap}.rankPrintVgv{color:#b8ff2c;font-weight:1000}.rankPrintActions{max-width:820px;margin:8px auto;display:flex;gap:8px}.rankPrintActions button{flex:1}@media(max-width:520px){#rankPrintOverlay{padding:3px}.rankPrintSheet{padding:7px}.rankPrintTitle{font-size:17px}.rankPrintMain b{font-size:19px}.rankPrintStats{gap:3px;margin:5px 0}.rankPrintStat{padding:4px}.rankPrintStat b{font-size:9px}.rankPrintTable{font-size:7.2px}.rankPrintTable th,.rankPrintTable td{padding:2.5px 2px}.rankPrintTable td:nth-child(2){max-width:155px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}}`;document.head.appendChild(css);
+ function ensureButton(){const s=document.querySelector('#rank .section');if(!s||document.getElementById('rankPrintBtn'))return;const b=document.createElement('button');b.id='rankPrintBtn';b.textContent='📸 Modo Print';b.onclick=openPrint;s.appendChild(b)}
+ function summary(label){const c=[...document.querySelectorAll('#rankSummary .stat')].find(x=>x.querySelector('.label')?.innerText.trim().toUpperCase()===label.toUpperCase());return c?.querySelector('b')?.innerText.trim()||'—'}
+ function rows(){return [...document.querySelectorAll('#rankBody tr')].map(tr=>{const td=tr.querySelectorAll('td');if(td.length<10)return null;return{pos:td[0].innerText.trim(),name:td[1].innerText.trim().split('\n')[0],couples:td[3].innerText.trim(),sales:td[6].innerText.trim(),vgvGeneral:td[8].innerText.trim(),vgvAtivo:td[9].innerText.trim()}}).filter(Boolean)}
+ function period(){const s=document.getElementById('rankPeriod');return s?.options[s.selectedIndex]?.text||'Ranking 2026'}
+ function openPrint(){const rr=rows();if(!rr.length)return alert('Não há dados para este ranking.');let o=document.getElementById('rankPrintOverlay');if(!o){o=document.createElement('div');o.id='rankPrintOverlay';document.body.appendChild(o)}o.innerHTML=`<div class="rankPrintSheet"><div class="rankPrintHead"><div><div class="rankPrintBrand">TARGET X • PERFORMANCE COMMAND</div><div class="rankPrintTitle">RANKING DE PERFORMANCE</div><div class="rankPrintPeriod">${period()}</div></div><div class="rankPrintMain"><small>VGV GERAL</small><b>${summary('VGV Geral')}</b></div></div><div class="rankPrintStats"><div class="rankPrintStat"><small>Profissionais</small><b>${summary('Profissionais')}</b></div><div class="rankPrintStat"><small>Casais</small><b>${summary('Casais')}</b></div><div class="rankPrintStat"><small>Vendas</small><b>${summary('Vendas')}</b></div><div class="rankPrintStat"><small>VGV Ativo</small><b>${summary('VGV Ativo')}</b></div><div class="rankPrintStat"><small>NoTour</small><b>${summary('NoTour')}</b></div><div class="rankPrintStat"><small>Brindes</small><b>${summary('Brindes')}</b></div></div><table class="rankPrintTable"><thead><tr><th>#</th><th>Profissional</th><th>Casais</th><th>Vendas</th><th>VGV Geral</th><th>VGV Ativo</th></tr></thead><tbody>${rr.map(r=>`<tr><td>${r.pos}</td><td>${r.name}</td><td>${r.couples}</td><td>${r.sales}</td><td class="rankPrintVgv">${r.vgvGeneral}</td><td>${r.vgvAtivo}</td></tr>`).join('')}</tbody></table></div><div class="rankPrintActions"><button id="rankPrintBack">← Voltar</button><button class="primary" id="rankPrintFull">Tela cheia</button></div>`;o.classList.add('open');document.getElementById('rankPrintBack').onclick=()=>o.classList.remove('open');document.getElementById('rankPrintFull').onclick=()=>document.documentElement.requestFullscreen?.();window.scrollTo(0,0)}
+ const old=window.renderRank;if(typeof old==='function')window.renderRank=function(){old();setTimeout(ensureButton,0)};document.addEventListener('click',e=>{if(e.target?.dataset?.page==='rank')setTimeout(ensureButton,0)});setTimeout(ensureButton,500);
 })();
+
+// Carrega o módulo de upload em todas as telas do TARGET X.
+(function(){if(document.querySelector('script[data-tx-upload]'))return;const s=document.createElement('script');s.src='upload-import.js?v=44';s.dataset.txUpload='1';document.head.appendChild(s)})();
