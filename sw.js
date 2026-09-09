@@ -1,10 +1,81 @@
 const CACHE_PREFIX='target-x-shell-';
-const CACHE_VERSION='v61-20260908-v6-clean-core';
+const CACHE_VERSION='v62-20260909-private-query-safe';
 const CACHE=`${CACHE_PREFIX}${CACHE_VERSION}`;
 const APP_SHELL=['./','./index.html','./hist-2026.js','./app.js','./manager-tools.js','./upload-import.js','./client-profile.js','./profile-explorer.js','./profile-interactive.js','./rank-print.js','./print-mode.js','./alerts.js','./weekly-history.json','./manifest.webmanifest','./icon-192.png','./icon-512.png'];
-const SAFE_SHELL_PATHS=new Set(APP_SHELL.map(item=>new URL(item,self.registration.scope).pathname));
-function cacheable(r){if(!r||!r.ok||r.type==='opaque'||r.redirected||r.status===206)return false;const cc=r.headers.get('cache-control')||'';return !/(?:^|,)\s*(?:private|no-store)\b/i.test(cc)}
-async function precache(){const c=await caches.open(CACHE);await Promise.all(APP_SHELL.map(async p=>{try{const q=new Request(p,{credentials:'omit',cache:'reload',redirect:'error'}),r=await fetch(q);if(cacheable(r))await c.put(q,r.clone())}catch{}}))}
-self.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(precache())});
-self.addEventListener('activate',e=>{e.waitUntil((async()=>{const ks=await caches.keys();await Promise.all(ks.filter(k=>k.startsWith(CACHE_PREFIX)&&k!==CACHE).map(k=>caches.delete(k)));await self.clients.claim()})())});
-self.addEventListener('fetch',e=>{const q=e.request;if(q.method!=='GET')return;let u;try{u=new URL(q.url)}catch{return}if(u.origin!==self.location.origin)return;if(q.mode==='navigate'){e.respondWith((async()=>{try{return await fetch(q,{cache:'no-store',redirect:'error'})}catch{return(await caches.match('./index.html'))||Response.error()}})());return}if(!SAFE_SHELL_PATHS.has(u.pathname))return;e.respondWith((async()=>{try{const r=await fetch(q,{cache:'no-store',redirect:'error'});if(cacheable(r)){const c=await caches.open(CACHE);await c.put(q,r.clone())}return r}catch{return(await caches.match(q))||Response.error()}})())});
+const SHELL_URLS=new Set(APP_SHELL.map(item=>new URL(item,self.registration.scope).href));
+const SENSITIVE=/\b(api|auth|login|logout|session|token|password|senha|secret|private|account|conta)\b/i;
+
+function cacheableRequest(request){
+  if(!request||request.method!=='GET') return false;
+  const url=new URL(request.url);
+  if(url.origin!==self.location.origin) return false;
+  if(request.headers.has('authorization')||request.headers.has('cookie')||request.headers.has('range')||request.headers.has('if-range')) return false;
+  if(SENSITIVE.test(url.pathname)||SENSITIVE.test(url.search)) return false;
+  return true;
+}
+
+function cacheableResponse(response){
+  if(!response||!response.ok||response.type==='opaque'||response.redirected||response.status===206) return false;
+  if(response.headers.has('set-cookie')||response.headers.has('content-range')) return false;
+  const cc=(response.headers.get('cache-control')||'').toLowerCase();
+  if(cc.includes('private')||cc.includes('no-store')) return false;
+  const vary=(response.headers.get('vary')||'').toLowerCase().split(',').map(v=>v.trim()).filter(Boolean);
+  if(vary.some(v=>v==='*'||v==='cookie'||v==='authorization'||v==='range')) return false;
+  return true;
+}
+
+async function precache(){
+  const cache=await caches.open(CACHE);
+  await Promise.all(APP_SHELL.map(async asset=>{
+    try{
+      const url=new URL(asset,self.registration.scope);
+      const request=new Request(url,{credentials:'omit',cache:'reload',redirect:'error'});
+      const response=await fetch(request);
+      if(cacheableResponse(response)) await cache.put(url,response.clone());
+    }catch{}
+  }));
+}
+
+self.addEventListener('install',event=>{
+  event.waitUntil((async()=>{await precache();await self.skipWaiting()})());
+});
+
+self.addEventListener('activate',event=>{
+  event.waitUntil((async()=>{
+    const keys=await caches.keys();
+    await Promise.all(keys.filter(key=>key.startsWith(CACHE_PREFIX)&&key!==CACHE).map(key=>caches.delete(key)));
+    await self.clients.claim();
+  })());
+});
+
+self.addEventListener('fetch',event=>{
+  const request=event.request;
+  if(!cacheableRequest(request)) return;
+  const url=new URL(request.url);
+  const isNavigation=request.mode==='navigate';
+  const isShell=url.search===''&&SHELL_URLS.has(url.href);
+  if(!isNavigation&&!isShell) return;
+
+  event.respondWith((async()=>{
+    try{
+      const response=await fetch(request,{cache:'no-store',redirect:'error'});
+      if(isShell&&cacheableResponse(response)){
+        const cache=await caches.open(CACHE);
+        await cache.put(request,response.clone());
+      }
+      return response;
+    }catch(error){
+      if(isShell){
+        const cache=await caches.open(CACHE);
+        const cached=await cache.match(request);
+        if(cached) return cached;
+      }
+      if(isNavigation){
+        const cache=await caches.open(CACHE);
+        const fallback=await cache.match(new URL('./index.html',self.registration.scope));
+        if(fallback) return fallback;
+      }
+      throw error;
+    }
+  })());
+});
