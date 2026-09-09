@@ -24,6 +24,22 @@
   // Recria o seletor porque o app.js monta a lista antes deste módulo carregar.
   setupSelects();
 
+  // Projeção automática de setembro. Usa a última data realmente carregada na base,
+  // e não a data atual, para não distorcer a projeção quando a planilha estiver atrasada.
+  function renderProjectionCard(){
+    const root=$('annualStats');if(!root)return;
+    let card=$('txProjectionCard');
+    if(!card){card=document.createElement('div');card.id='txProjectionCard';card.className='card stat';root.appendChild(card)}
+    const s=sepTotal(),m=currentMeta(),through=String(m?.through||'');
+    const day=Math.max(1,Math.min(30,Number(through.slice(8,10))||1));
+    const projected={couples:s.couples/day*30,sales:s.sales/day*30,vgv:s.vgv/day*30};
+    const projectedMeta=METAS.vgv?projected.vgv/METAS.vgv*100:0;
+    const paceClass=projected.vgv>=METAS.vgv?'green':'amber';
+    card.innerHTML=`<span class="label">Projeção de resultados • 30/09</span><b>${money(projected.vgv)}</b><small><strong>${num(projected.sales)} vendas • ${num(projected.couples)} casais</strong><br><span class="${paceClass}">${projectedMeta.toFixed(1)}% da meta de VGV</span> • base até ${through?through.split('-').reverse().join('/'):'—'}</small>`;
+  }
+  const baseRenderDashboard=renderDashboard;
+  renderDashboard=function(){baseRenderDashboard();renderProjectionCard()};
+
   const baseRenderTeams=renderTeams;
   renderTeams=function(){
     const root=$('teamGrid');if(!root)return;
@@ -51,6 +67,6 @@
   window.renderCaptain=function(){const sel=$('weekSelect');if(!sel)return;if(!sel.options.length)fillWeeks();const start=sel.value;if(!start)return;const rr=rankingFor(start),top=rr[0];$('weekRange').textContent=`${br(start)} → ${br(weekEnd(start))} • segunda a domingo`;$('captainName').textContent=top?.name||'—';$('captainResult').textContent=top?`${num(top.couples)} casais • ${num(top.sales)} vendas`:'Sem dados';$('weeklyTotal').textContent=`${num(rr.reduce((s,x)=>s+x.couples,0))} casais na semana`;$('weeklyBody').innerHTML=rr.length?rr.map((x,i)=>`<tr><td><b>${i+1}º</b></td><td>${esc(x.name)}</td><td>${esc(effectivePerson(x.name).group||'A DEFINIR')}</td><td><b>${num(x.couples)}</b></td><td>${num(x.sales)}</td></tr>`).join(''):'<tr><td colspan="5" class="empty">Sem dados para esta semana.</td></tr>'};
   if($('weekSelect'))$('weekSelect').onchange=()=>window.renderCaptain();
   fetch('weekly-history.json?v=60',{cache:'no-store'}).then(r=>r.ok?r.json():{}).then(j=>{WEEK_HISTORY=j||{};fillWeeks();window.renderCaptain()}).catch(()=>{fillWeeks();window.renderCaptain()});
-  window.addEventListener('targetx:data-updated',()=>{setupSelects();fillWeeks($('weekSelect')?.value);renderTeams();renderRank();window.renderCaptain()});
-  renderTeams();renderRank();window.renderCaptain();
+  window.addEventListener('targetx:data-updated',()=>{setupSelects();fillWeeks($('weekSelect')?.value);renderDashboard();renderTeams();renderRank();window.renderCaptain()});
+  renderDashboard();renderTeams();renderRank();window.renderCaptain();
 })();
