@@ -1,5 +1,5 @@
 const CACHE_PREFIX='target-x-shell-';
-const CACHE_VERSION='v62-20260909-private-query-safe';
+const CACHE_VERSION='v63-20260910-private-vary-range-safe';
 const CACHE=`${CACHE_PREFIX}${CACHE_VERSION}`;
 const APP_SHELL=['./','./index.html','./hist-2026.js','./app.js','./manager-tools.js','./upload-import.js','./client-profile.js','./profile-explorer.js','./profile-interactive.js','./rank-print.js','./print-mode.js','./alerts.js','./weekly-history.json','./manifest.webmanifest','./icon-192.png','./icon-512.png'];
 const SHELL_URLS=new Set(APP_SHELL.map(item=>new URL(item,self.registration.scope).href));
@@ -20,7 +20,7 @@ function cacheableResponse(response){
   const cc=(response.headers.get('cache-control')||'').toLowerCase();
   if(cc.includes('private')||cc.includes('no-store')) return false;
   const vary=(response.headers.get('vary')||'').toLowerCase().split(',').map(v=>v.trim()).filter(Boolean);
-  if(vary.some(v=>v==='*'||v==='cookie'||v==='authorization'||v==='range')) return false;
+  if(vary.some(v=>v==='*'||v==='cookie'||v==='authorization'||v==='range'||v==='if-range')) return false;
   return true;
 }
 
