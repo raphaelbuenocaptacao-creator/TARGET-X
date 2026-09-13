@@ -1,0 +1,43 @@
+name: TARGET-X SW Registration Migration
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/pwa-fix-registration.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  migrate-registration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Replace stale service worker registration exactly once
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          path = Path('index.html')
+          text = path.read_text(encoding='utf-8')
+          old = "./sw.js?v=62-20260909-private-query-safe"
+          new = "./sw.js?v=v63-20260910-private-vary-range-safe"
+          count = text.count(old)
+          if count != 1:
+              raise SystemExit(f'expected exactly one stale registration, found {count}')
+          path.write_text(text.replace(old, new, 1), encoding='utf-8')
+          PY
+      - name: Commit guarded migration
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git diff --cached --check
+          git commit -m 'fix: align TARGET-X service worker registration'
+          git push origin HEAD:main
