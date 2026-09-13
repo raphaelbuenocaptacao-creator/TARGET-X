@@ -1,0 +1,62 @@
+name: TARGET-X PWA Audit
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  pwa-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate manifest, icons, metadata and service worker
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, pathlib, re, struct
+
+          root = pathlib.Path('.')
+          manifest = json.loads((root/'manifest.webmanifest').read_text(encoding='utf-8'))
+          html = (root/'index.html').read_text(encoding='utf-8')
+          sw = (root/'sw.js').read_text(encoding='utf-8')
+
+          required = ['name','short_name','start_url','display','theme_color','background_color','icons']
+          missing = [k for k in required if not manifest.get(k)]
+          assert not missing, f'manifest missing: {missing}'
+          assert manifest['display'] in {'standalone','fullscreen','minimal-ui'}, 'manifest display is not installable'
+
+          icons = manifest['icons']
+          assert any(i.get('sizes') == '192x192' and i.get('type') == 'image/png' for i in icons), '192x192 PNG icon missing'
+          assert any(i.get('sizes') == '512x512' and i.get('type') == 'image/png' for i in icons), '512x512 PNG icon missing'
+          assert any(i.get('sizes') == '512x512' and 'maskable' in i.get('purpose','') for i in icons), '512x512 maskable icon missing'
+
+          def png_size(path):
+              data = pathlib.Path(path).read_bytes()[:24]
+              assert data[:8] == b'\x89PNG\r\n\x1a\n', f'{path} is not PNG'
+              return struct.unpack('>II', data[16:24])
+          assert png_size('icon-192.png') == (192,192), f'icon-192.png wrong dimensions: {png_size("icon-192.png")}'
+          assert png_size('icon-512.png') == (512,512), f'icon-512.png wrong dimensions: {png_size("icon-512.png")}'
+
+          for needle in ['name="viewport"','name="theme-color"','rel="manifest"','mobile-web-app-capable','apple-mobile-web-app-capable','beforeinstallprompt']:
+              assert needle in html, f'missing mobile/install metadata: {needle}'
+          assert "location.protocol==='https:'" in html or 'location.protocol === \'https:\'' in html, 'service worker is not restricted to HTTPS/localhost'
+          assert "updateViaCache:'none'" in html or 'updateViaCache: \'none\'' in html, 'updateViaCache none missing'
+
+          version = re.search(r"CACHE_VERSION\s*=\s*['\"]([^'\"]+)['\"]", sw)
+          assert version, 'CACHE_VERSION missing in sw.js'
+          version = version.group(1)
+          assert f"sw.js?v={version}" in html, f'service worker registration version mismatch: expected {version}'
+
+          for needle in ["headers.has('authorization')","headers.has('cookie')","headers.has('range')","headers.has('if-range')","cc.includes('private')","cc.includes('no-store')","headers.has('set-cookie')","headers.has('content-range')","v==='range'","v==='if-range'","key.startsWith(CACHE_PREFIX)&&key!==CACHE"]:
+              assert needle in sw, f'service worker privacy/update guard missing: {needle}'
+          assert "url.origin!==self.location.origin" in sw, 'cross-origin requests must not be cached'
+          assert "request.method!=='GET'" in sw, 'non-GET requests must not be cached'
+          assert "request.mode==='navigate'" in sw, 'navigation fallback missing'
+
+          print('TARGET-X PWA audit passed')
+          PY
