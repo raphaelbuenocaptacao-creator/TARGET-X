@@ -44,7 +44,7 @@
   if('serviceWorker'in navigator&&(location.protocol==='https:'||location.hostname==='localhost')){
     window.addEventListener('load',async()=>{
       try{
-        const registration=await navigator.serviceWorker.register('./sw.js?v=62-20260909-private-query-safe',{scope:'./',updateViaCache:'none'});
+        const registration=await navigator.serviceWorker.register('./sw.js?v=v63-20260910-private-vary-range-safe',{scope:'./',updateViaCache:'none'});
         await registration.update();
       }catch(error){console.warn('TARGET X PWA service worker registration failed',error)}
     });
