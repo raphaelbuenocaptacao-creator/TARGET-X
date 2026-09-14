@@ -42,10 +42,20 @@
   installBtn?.addEventListener('click',async()=>{if(!installPrompt)return;installPrompt.prompt();await installPrompt.userChoice;installPrompt=null;installBtn.hidden=true});
   window.addEventListener('appinstalled',()=>{installPrompt=null;if(installBtn)installBtn.hidden=true});
   if('serviceWorker'in navigator&&(location.protocol==='https:'||location.hostname==='localhost')){
+    const hadController=Boolean(navigator.serviceWorker.controller);
+    let reloading=false;
+    navigator.serviceWorker.addEventListener('controllerchange',()=>{
+      if(!hadController||reloading)return;
+      reloading=true;
+      location.reload();
+    });
     window.addEventListener('load',async()=>{
       try{
         const registration=await navigator.serviceWorker.register('./sw.js?v=v63-20260910-private-vary-range-safe',{scope:'./',updateViaCache:'none'});
-        await registration.update();
+        const refresh=()=>registration.update().catch(error=>console.warn('TARGET X PWA update check failed',error));
+        await refresh();
+        document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')refresh()});
+        window.addEventListener('online',refresh);
       }catch(error){console.warn('TARGET X PWA service worker registration failed',error)}
     });
   }
