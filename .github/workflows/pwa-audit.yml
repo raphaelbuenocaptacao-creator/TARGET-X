@@ -3,6 +3,8 @@ name: TARGET-X PWA Audit
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -46,6 +48,8 @@ jobs:
               assert needle in html, f'missing mobile/install metadata: {needle}'
           assert "location.protocol==='https:'" in html or 'location.protocol === \'https:\'' in html, 'service worker is not restricted to HTTPS/localhost'
           assert "updateViaCache:'none'" in html or 'updateViaCache: \'none\'' in html, 'updateViaCache none missing'
+          for needle in ["visibilitychange", "registration.update()", "controllerchange", "navigator.serviceWorker.controller"]:
+              assert needle in html, f'PWA update lifecycle guard missing: {needle}'
 
           version = re.search(r"CACHE_VERSION\s*=\s*['\"]([^'\"]+)['\"]", sw)
           assert version, 'CACHE_VERSION missing in sw.js'
