@@ -1,7 +1,7 @@
 const CACHE_PREFIX='target-x-shell-';
-const CACHE_VERSION='v63-20260910-private-vary-range-safe';
+const CACHE_VERSION='v64-20260916-september-data';
 const CACHE=`${CACHE_PREFIX}${CACHE_VERSION}`;
-const APP_SHELL=['./','./index.html','./hist-2026.js','./app.js','./manager-tools.js','./upload-import.js','./client-profile.js','./profile-explorer.js','./profile-interactive.js','./rank-print.js','./print-mode.js','./alerts.js','./weekly-history.json','./manifest.webmanifest','./icon-192.png','./icon-512.png'];
+const APP_SHELL=['./','./index.html','./hist-2026.js','./sep-2026-current.js','./app.js','./manager-tools.js','./upload-import.js','./client-profile.js','./profile-explorer.js','./profile-interactive.js','./rank-print.js','./print-mode.js','./alerts.js','./weekly-history.json','./manifest.webmanifest','./icon-192.png','./icon-512.png'];
 const SHELL_URLS=new Set(APP_SHELL.map(item=>new URL(item,self.registration.scope).href));
 const SENSITIVE=/\b(api|auth|login|logout|session|token|password|senha|secret|private|account|conta)\b/i;
 
